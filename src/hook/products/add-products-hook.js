@@ -1,17 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { getOneCategory } from "../../redux/actions/subcategoryAction";
-import { createProduct } from "../../redux/actions/productsAction";
+import {
+  createProduct,
+  createProductVariant,
+} from "../../redux/actions/productsAction";
 import notify from "./../../hook/useNotifaction";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllCategory } from "../../redux/actions/categoryAction";
 import { getAllBrand } from "./../../redux/actions/brandAction";
-
+import * as yup from "yup";
+import { useFormik, Form } from "formik";
 const AdminAddProductsHook = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getAllCategory());
     dispatch(getAllBrand());
   }, []);
+  const schema = yup.object().shape({
+    productName: yup.string().min(3).required(),
+    description: yup.string().min(20).required(),
+    price: yup.number().positive("Must be more than 0").required(),
+    discountPrice: yup.number().positive("Must be more than 0"),
+    category: yup.string().required(),
+    subCategory: yup.string(),
+    brand: yup.string().required(),
+  });
   //get last catgeory state from redux
   const category = useSelector((state) => state.allCategory.category);
   //get last brand state from redux
@@ -19,53 +32,90 @@ const AdminAddProductsHook = () => {
 
   //get last sub cat state from redux
   const subCat = useSelector((state) => state.subCategory.subcategory);
-  console.log(subCat);
+  const [seletedColors, setseletedColors] = useState([]);
+  const [seletedsizes, setseletedsizes] = useState([]);
+  console.log(seletedColors);
   const onSelect = (selectedList) => {
     setSeletedSubID(selectedList);
   };
   const onRemove = (selectedList) => {
     setSeletedSubID(selectedList);
   };
-
+  //for colors
+  const onSelectColor = (colors) => {
+    setseletedColors(colors);
+  };
+  const onRemoveColor = (colors) => {
+    setseletedColors(colors);
+  };
+  //for sizes
+  const onSelectSize = (sizes) => {
+    setseletedsizes(sizes);
+  };
+  const onRemoveSize = (sizes) => {
+    setseletedsizes(sizes);
+  };
   const [options, setOptions] = useState([]);
-
+  const [colorOPtions, setColorOPtionsOptions] = useState([
+    { name: "red", id: 1 },
+    { name: "green", id: 2 },
+    { name: "blue", id: 3 },
+    { name: "yellow", id: 4 },
+    { name: "black", id: 5 },
+    { name: "white", id: 6 },
+  ]);
+  const [sizeOPtions, setSizeOPtionsOptions] = useState([
+    { name: "xs", id: 1 },
+    { name: "s", id: 2 },
+    { name: "m", id: 3 },
+    { name: "L", id: 4 },
+    { name: "XL", id: 5 },
+    { name: "XXL", id: 6 },
+  ]);
   //values images products
-  const [images, setImages] = useState({});
+  const [images, setImages] = useState([]);
+  console.log(images);
   //values state
+  const [isDisabledAccordion, setIsDisabledAccordion] = useState(true);
+  const [data, setData] = useState({});
   const [prodName, setProdName] = useState("");
   const [prodDescription, setProdDescription] = useState("");
-  const [priceBefore, setPriceBefore] = useState("السعر قبل الخصم");
-  const [priceAftr, setPriceAftr] = useState("السعر بعد الخصم");
-  const [qty, setQty] = useState("الكمية المتاحة");
+  const [priceBefore, setPriceBefore] = useState("");
+  const [priceAftr, setPriceAftr] = useState("");
+  const [qty, setQty] = useState("");
   const [CatID, setCatID] = useState("");
   const [BrandID, SetBrandID] = useState("");
   const [subCatID, setSubCatID] = useState([]);
   const [seletedSubID, setSeletedSubID] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  console.log(data);
   //to change name state
-  const onChangeProdName = (event) => {
-    event.persist();
-    setProdName(event.target.value);
+  const onChangeProdName = (value) => {
+    // event.persist();
+    setProdName(value);
+  };
+  console.log(
+    prodName + " " + prodDescription + " " + priceAftr + " " + priceBefore
+  );
+  //to change name state
+  const onChangeDesName = (value) => {
+    // event.persist();
+    setProdDescription(value);
   };
   //to change name state
-  const onChangeDesName = (event) => {
-    event.persist();
-    setProdDescription(event.target.value);
+  const onChangePriceBefor = (value) => {
+    // event.persist();
+    setPriceBefore(value);
   };
   //to change name state
-  const onChangePriceBefor = (event) => {
-    event.persist();
-    setPriceBefore(event.target.value);
-  };
-  //to change name state
-  const onChangePriceAfter = (event) => {
-    event.persist();
-    setPriceAftr(event.target.value);
+  const onChangePriceAfter = (value) => {
+    // event.persist();
+    setPriceAftr(value);
   }; //to change name state
-  const onChangeQty = (event) => {
-    event.persist();
-    setQty(event.target.value);
+  const onChangeQty = (value) => {
+    // event.persist();
+    setQty(value);
   };
   const onChangeColor = (event) => {
     event.persist();
@@ -87,23 +137,13 @@ const AdminAddProductsHook = () => {
   };
 
   //when selet category store id
-  const onSeletCategory = async (e) => {
-    if (e.target.value !== 0) {
-      await dispatch(getOneCategory(e.target.value));
-    }
-    setCatID(e.target.value);
+  const onSeletCategory = async (value) => {
+    setCatID(value);
   };
-  useEffect(() => {
-    if (CatID !== 0) {
-      if (subCat.data) {
-        setOptions(subCat.data);
-      }
-    } else setOptions([]);
-  }, [CatID]);
 
   //when selet brand store id
-  const onSeletBrand = (e) => {
-    SetBrandID(e.target.value);
+  const onSeletBrand = (value) => {
+    SetBrandID(value);
   };
 
   //to convert base 64 to file
@@ -120,24 +160,31 @@ const AdminAddProductsHook = () => {
 
     return new File([u8arr], filename, { type: mime });
   }
-
+  const generateVariants = async (e) => {
+    let newSelectedcolors = [];
+    let newSelectedsizes = [];
+    seletedColors.forEach((element) => {
+      newSelectedcolors.push(element.name);
+    });
+    seletedsizes.forEach((element) => {
+      newSelectedsizes.push(element.name);
+    });
+    setTimeout(async () => {
+      setLoading(true);
+      dispatch(createProductVariant(product._id, "data"));
+      setLoading(false);
+    }, 1000);
+  };
   //to save data
   const handelSubmit = async (e) => {
     e.preventDefault();
-    if (
-      CatID === 0 ||
-      prodName === "" ||
-      prodDescription === "" ||
-      images.length <= 0 ||
-      priceBefore <= 0
-    ) {
-      notify("من فضلك اكمل البيانات", "warn");
+    if (!data.productName) {
+      notify("please fill all fields", "warn");
       return;
     }
 
     //convert base 64 image to file
     const imgCover = dataURLtoFile(images[0], Math.random() + ".png");
-    console.log(imgCover);
     //convert array of base 64 image to file
     const itemImages = Array.from(Array(Object.keys(images).length).keys()).map(
       (item, index) => {
@@ -146,25 +193,30 @@ const AdminAddProductsHook = () => {
     );
 
     const formData = new FormData();
-    formData.append("title", prodName);
-    formData.append("description", prodDescription);
+    formData.append("title", data.productName);
+    formData.append("description", data.description);
     formData.append("quantity", 1);
-    formData.append("price", priceBefore);
-    formData.append("priceAfterDiscount", priceAftr);
-    formData.append("category", CatID);
-    formData.append("brand", BrandID);
+    formData.append("price", data.price);
+    if (data.discountPrice != "") {
+      formData.append("priceAfterDiscount", data.discountPrice);
+    }
+    formData.append("category", data.category);
+    formData.append("brand", data.brand);
 
-    setTimeout(() => {
-      formData.append("imageCover", imgCover);
-      itemImages.map((item) => formData.append("images", item));
-    }, 1000);
+    // setTimeout(() => {
+    formData.append("imageCover", imgCover);
+    itemImages.map((item) => formData.append("images", item));
+    // }, 1000);
 
-    setTimeout(() => {
-      console.log(imgCover);
-      console.log(itemImages);
-    }, 1000);
+    // setTimeout(() => {
+    //   console.log(imgCover);
+    //   console.log(itemImages);
+    // }, 1000);
     colors.map((color) => formData.append("availableColors", color));
     seletedSubID.map((item) => formData.append("subcategory", item._id));
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
     setTimeout(async () => {
       setLoading(true);
       await dispatch(createProduct(formData));
@@ -182,18 +234,19 @@ const AdminAddProductsHook = () => {
       setImages([]);
       setProdName("");
       setProdDescription("");
-      setPriceBefore("السعر قبل الخصم");
-      setPriceAftr("السعر بعد الخصم");
-      setQty("الكمية المتاحة");
+      setPriceBefore("");
+      setPriceAftr("");
+      setQty("");
       SetBrandID(0);
       setSeletedSubID([]);
       setTimeout(() => setLoading(true), 1500);
 
       if (product) {
         if (product.status === 201) {
-          notify("تم الاضافة بنجاح", "success");
+          setIsDisabledAccordion(false);
+          notify("product added succefully", "success");
         } else {
-          notify("هناك مشكله", "error");
+          notify("oh no ! there is a problem ", "error");
         }
       }
     }
@@ -226,6 +279,16 @@ const AdminAddProductsHook = () => {
     prodDescription,
     prodName,
     setOptions,
+    schema,
+    setData,
+    setIsDisabledAccordion,
+    isDisabledAccordion,
+    sizeOPtions,
+    colorOPtions,
+    onSelectColor,
+    onRemoveColor,
+    onSelectSize,
+    onRemoveSize,
   ];
 };
 

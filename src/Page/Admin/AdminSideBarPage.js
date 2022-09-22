@@ -13,73 +13,13 @@ import Multiselect from "multiselect-react-dropdown";
 import MultiImageInput from "react-multiple-image-input";
 import Button from "react-bootstrap/Button";
 import { getOneCategory } from "../../redux/actions/subcategoryAction";
+import { ToastContainer } from "react-toastify";
 import * as yup from "yup";
 import { useFormik, Form } from "formik";
 import { useDispatch, useSelector } from "react-redux";
+import { CompactPicker } from "react-color";
+import add from "../../images/add.png";
 const AdminAllOrdersPage = () => {
-  const onSubmit = async (values, actions) => {
-    handleNextAccordion("mediaPanel");
-    console.log(values);
-    // console.log(actions);
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-    // actions.resetForm();
-  };
-  const dispatch = useDispatch();
-
-  const schema = yup.object().shape({
-    productName: yup.string().min(3).required(),
-    description: yup.string().min(20).required(),
-    price: yup.number().required(),
-    discountPrice: yup.number(),
-    category: yup.string().required(),
-    subCategory: yup.string(),
-    brand: yup.string().required(),
-  });
-  const {
-    values,
-    errors,
-    touched,
-    isSubmitting,
-    handleBlur,
-    handleChange,
-    handleSubmit,
-  } = useFormik({
-    initialValues: {
-      productName: "",
-      description: "",
-      price: "",
-      discountPrice: "",
-      quantity: "",
-      category: "",
-      subCategory: "",
-      brand: "",
-    },
-    validationSchema: schema,
-    onSubmit,
-  });
-  useEffect(() => {
-    if (values.category.length > 0) {
-      console.log("shtghal");
-      dispatch(getOneCategory(values.category));
-    }
-  }, [values.category]);
-  //get last sub cat state from redux
-  const subCat = useSelector((state) => state.subCategory.subcategory);
-  console.log(subCat);
-  useEffect(() => {
-    if (subCat.data) {
-      setOptions(subCat.data);
-    } else setOptions([]);
-  }, [subCat]);
-  const [expanded, setExpanded] = React.useState("panel1");
-  const [isDisabledAccordion, setIsDisabledAccordion] = React.useState(true);
-  const handleAccordionChange = (isExpanded, panel) => {
-    setExpanded(isExpanded ? panel : false);
-  };
-
-  const handleNextAccordion = (panel) => {
-    setExpanded(panel);
-  };
   const [
     onChangeDesName,
     onChangeQty,
@@ -107,7 +47,76 @@ const AdminAllOrdersPage = () => {
     prodDescription,
     prodName,
     setOptions,
+    schema,
+    setData,
+    isDisabledAccordion,
+    setIsDisabledAccordion,
+    colorOPtions,
+    sizeOPtions,
+    onSelectColor,
+    onRemoveColor,
+    onSelectSize,
+    onRemoveSize,
   ] = AdminAddProductsHook();
+  console.log("isDisabledAccordion : " + setIsDisabledAccordion);
+  const onSubmit = async (values, actions) => {
+    handleNextAccordion("mediaPanel");
+    setData(values);
+    setIsDisabledAccordion1(false);
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
+    // actions.resetForm();
+  };
+  const dispatch = useDispatch();
+
+  const {
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+  } = useFormik({
+    initialValues: {
+      productName: "",
+      description: "",
+      price: "",
+      discountPrice: "",
+      quantity: "",
+      category: "",
+      subCategory: "",
+      brand: "",
+    },
+    validationSchema: schema,
+    onSubmit,
+  });
+  useEffect(() => {
+    if (values.category.length > 0) {
+      dispatch(getOneCategory(values.category));
+    }
+  }, [values.category]);
+  //get last sub cat state from redux
+  const subCat = useSelector((state) => state.subCategory.subcategory);
+  useEffect(() => {
+    if (subCat.data) {
+      setOptions(subCat.data);
+    } else setOptions([]);
+  }, [subCat]);
+  useEffect(() => {
+    if (!setIsDisabledAccordion) {
+      handleNextAccordion("panel3");
+    }
+  }, [setIsDisabledAccordion]);
+  const [expanded, setExpanded] = React.useState("panel1");
+  const [isDisabledAccordion1, setIsDisabledAccordion1] = React.useState(true);
+  // const [isDisabledAccordion, setIsDisabledAccordion] = React.useState(true);
+  const handleAccordionChange = (isExpanded, panel) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
+  const handleNextAccordion = (panel) => {
+    setExpanded(panel);
+  };
   return (
     <Container fluid>
       <Row className="py-3">
@@ -139,7 +148,7 @@ const AdminAllOrdersPage = () => {
                     width: "100%",
                   }}
                 >
-                  <Col sm="5">
+                  <Col sm="6">
                     <input
                       id="productName"
                       value={values.productName}
@@ -256,7 +265,7 @@ const AdminAllOrdersPage = () => {
                       className="mt-2"
                       placeholder="select subcategory"
                       options={options}
-                      onSelect={handleChange}
+                      onSelect={onSelect}
                       onRemove={onRemove}
                       displayValue="name"
                       style={{ color: "red" }}
@@ -279,6 +288,7 @@ const AdminAllOrdersPage = () => {
             </AccordionDetails>
           </Accordion>
           <Accordion
+            disabled={isDisabledAccordion1}
             style={{ padding: 15 }}
             expanded={expanded === "mediaPanel"}
             onChange={(event, isExpanded) =>
@@ -311,8 +321,13 @@ const AdminAllOrdersPage = () => {
                 >
                   <Col sm="7" className="d-flex justify-content-end ">
                     <button
+                      disabled={images.length <= 0 ? true : false}
                       onClick={handelSubmit}
-                      className="btn-save d-inline mt-2 "
+                      className={
+                        images.length <= 0
+                          ? "btn btn-secondary d-inline mt-2 "
+                          : "btn-save d-inline mt-2 "
+                      }
                     >
                       create product
                     </button>
@@ -330,7 +345,7 @@ const AdminAllOrdersPage = () => {
             </AccordionDetails>
           </Accordion>
           <Accordion
-            disabled={isDisabledAccordion}
+            //disabled={setIsDisabledAccordion}
             style={{ padding: 15 }}
             expanded={expanded === "panel3"}
             onChange={(event, isExpanded) =>
@@ -342,11 +357,67 @@ const AdminAllOrdersPage = () => {
               id="panel3-header"
               expandIcon={<ExpandMoreIcon />}
             >
-              <Typography>Disabled Accordion</Typography>
+              <Typography variant="h6" gutterBottom>
+                variants
+              </Typography>
             </AccordionSummary>
+            <AccordionDetails>
+              <Container fluid>
+                <Row
+                  className="justify-content-center"
+                  style={{ width: "100%" }}
+                >
+                  <Col sm="4" className="justify-content-center me-5">
+                    <Multiselect
+                      id="Sizes"
+                      className="mt-2"
+                      placeholder="colors"
+                      options={sizeOPtions}
+                      onSelect={onSelectColor}
+                      onRemove={onRemoveColor}
+                      displayValue="name"
+                    />
+                  </Col>
+                  <Col
+                    sm="4"
+                    className="justify-content-center"
+                    //style={{ backgroundColor: "red" }}
+                  >
+                    <Multiselect
+                      id="colors"
+                      className="mt-2"
+                      placeholder="sizes"
+                      options={colorOPtions}
+                      onSelect={onSelectSize}
+                      onRemove={onRemoveSize}
+                      displayValue="name"
+                    />
+                  </Col>
+                </Row>
+                <Row
+                  className="justify-content-center"
+                  //style={{ backgroundColor: "red" }}
+                >
+                  <Col sm="1">
+                    <button
+                      disabled={images.length <= 0 ? true : false}
+                      onClick={handelSubmit}
+                      className={
+                        images.length <= 0
+                          ? "btn btn-secondary d-inline mt-5 "
+                          : "btn-save d-inline mt-5 "
+                      }
+                    >
+                      generate
+                    </button>
+                  </Col>
+                </Row>
+              </Container>
+            </AccordionDetails>
           </Accordion>
         </Col>
       </Row>
+      <ToastContainer />
     </Container>
   );
 };
