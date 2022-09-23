@@ -536,7 +536,7 @@ const AdminAllOrdersPage = () => {
                 </Row>
                 {/* hon lsheghel */}
                 <>
-                  {productVariant && (
+                  {combsArrays && (
                     <Table aria-label="simple table">
                       <TableHead>
                         <TableRow>
@@ -547,15 +547,13 @@ const AdminAllOrdersPage = () => {
                               justifyContent="flex-start"
                               alignItems="center"
                             >
-                              <Typography>Product name</Typography>
+                              <Typography>Product Combo name</Typography>
                             </Box>
                           </TableCell>
                           <TableCell align="left">Price</TableCell>
-                          <TableCell align="left">Sale Price</TableCell>
+                          <TableCell align="left">discount Price</TableCell>
                           <TableCell align="left">Stock</TableCell>
-                          <TableCell align="left">is featured</TableCell>
-                          <TableCell align="left">SKU</TableCell>
-                          <TableCell align="left">is on sale</TableCell>
+                          <TableCell align="left">Image</TableCell>
                           <TableCell align="left" />
                         </TableRow>
                       </TableHead>
@@ -572,11 +570,10 @@ const AdminAllOrdersPage = () => {
                                 onChange={(e) =>
                                   handleCombinationChange(e, index)
                                 }
-                                value={combination.name}
+                                value={combination}
                                 inputProps={{
                                   name: "name",
                                 }}
-                                //fullWidth
                               />
                             </TableCell>
                             <TableCell align="left">
@@ -592,7 +589,6 @@ const AdminAllOrdersPage = () => {
                                 inputProps={{
                                   name: "price",
                                 }}
-                                //fullWidth
                               />
                             </TableCell>
                             <TableCell align="left">
@@ -608,7 +604,6 @@ const AdminAllOrdersPage = () => {
                                 inputProps={{
                                   name: "salePrice",
                                 }}
-                                //fullWidth
                               />
                             </TableCell>
                             <TableCell align="left">
@@ -624,33 +619,12 @@ const AdminAllOrdersPage = () => {
                                 inputProps={{
                                   name: "stock",
                                 }}
-                                //fullWidth
                               />
                             </TableCell>
-                            <TableCell align="left">
-                              <FormControl>
-                                <RadioGroup
-                                  aria-labelledby="demo-radio-buttons-group-label"
-                                  // defaultValue={combination.isFeatured}
-                                  name="isFeatured"
-                                  onChange={(e) =>
-                                    handleCombinationChange(e, index)
-                                  }
-                                >
-                                  <Radio
-                                    classes={{
-                                      root: classes.radio,
-                                      checked: classes.checked,
-                                    }}
-                                    value={index}
-                                    checked={combination.isFeatured}
-                                  />
-                                </RadioGroup>
-                              </FormControl>
-                            </TableCell>
+
                             <TableCell align="left">
                               <TextField
-                                style={{ width: 230 }}
+                                style={{ width: 100 }}
                                 id="outlined-name"
                                 margin="dense"
                                 variant="outlined"
@@ -661,10 +635,9 @@ const AdminAllOrdersPage = () => {
                                 inputProps={{
                                   name: "SKU",
                                 }}
-                                //fullWidth
                               />
                             </TableCell>
-                            <TableCell align="left">
+                            {/* <TableCell align="left">
                               <FormGroup>
                                 <FormControlLabel
                                   control={
@@ -681,7 +654,7 @@ const AdminAllOrdersPage = () => {
                                   name
                                 />
                               </FormGroup>
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell align="left">
                               <IconButton onClick={() => deleteTableRow(index)}>
                                 <DeleteForeverIcon />
