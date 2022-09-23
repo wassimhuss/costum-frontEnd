@@ -10,6 +10,9 @@ import {
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AdminAddProductsHook from "../../hook/products/add-products-hook";
 import Multiselect from "multiselect-react-dropdown";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import { useLovelySwitchStyles } from "@mui-treasury/styles/switch/lovely";
 import MultiImageInput from "react-multiple-image-input";
 import Button from "react-bootstrap/Button";
 import { getOneCategory } from "../../redux/actions/subcategoryAction";
@@ -19,6 +22,42 @@ import { useFormik, Form } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { CompactPicker } from "react-color";
 import add from "../../images/add.png";
+
+import {
+  Avatar,
+  Box,
+  // Button,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+  Switch,
+  Table,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField,
+  CircularProgress,
+  TableBody,
+  IconButton,
+} from "@material-ui/core";
+import { useState } from "react";
+const useStyles = makeStyles((theme) => ({
+  buttons: {
+    // alignSelf: "flex-end"
+  },
+  radio: {
+    "&$checked": {
+      color: "#4B8DF8",
+    },
+  },
+  checked: {
+    color: "#4B8DF8",
+  },
+}));
 const AdminAllOrdersPage = () => {
   const [
     onChangeDesName,
@@ -57,8 +96,11 @@ const AdminAllOrdersPage = () => {
     onRemoveColor,
     onSelectSize,
     onRemoveSize,
+    generateVariants,
+    seletedColors,
+    seletedsizes,
   ] = AdminAddProductsHook();
-  console.log("isDisabledAccordion : " + setIsDisabledAccordion);
+  console.log(seletedColors.length + " " + seletedsizes.length);
   const onSubmit = async (values, actions) => {
     handleNextAccordion("mediaPanel");
     setData(values);
@@ -107,15 +149,91 @@ const AdminAllOrdersPage = () => {
       handleNextAccordion("panel3");
     }
   }, [setIsDisabledAccordion]);
+  const classes = useStyles();
   const [expanded, setExpanded] = React.useState("panel1");
   const [isDisabledAccordion1, setIsDisabledAccordion1] = React.useState(true);
   // const [isDisabledAccordion, setIsDisabledAccordion] = React.useState(true);
   const handleAccordionChange = (isExpanded, panel) => {
     setExpanded(isExpanded ? panel : false);
   };
-
+  const lovelyStyles = useLovelySwitchStyles();
   const handleNextAccordion = (panel) => {
     setExpanded(panel);
+  };
+  //get create meesage
+  const productVariant = useSelector(
+    (state) => state.allproducts.productVariants
+  );
+  const [combsArrays, setCombsArrays] = useState([
+    "dress_blue_small",
+    "dress_blue_medium",
+    "dress_yellow_small",
+    "dress_yellow_medium",
+  ]);
+  const handleCombinationChange = (e, index) => {
+    let newState = [...combsArrays];
+    let { name } = e.target;
+    let value;
+    switch (name) {
+      // this case to make function behaive differntly depending on type of inputfield
+      case "name":
+        value = e.target.value;
+        // makeUniqueStringIdentity(value);
+        break;
+      case "price":
+        // now keyboard takes only integers and transform null to 0 value
+        value = parseInt(e.target.value);
+        if (isNaN(value)) {
+          value = 1;
+        }
+        break;
+      case "salePrice":
+        // now keyboard takes only integers and transform null to 0 value
+        value = parseInt(e.target.value);
+        if (isNaN(value)) {
+          value = 1;
+        }
+        break;
+      case "stock":
+        // now keyboard takes only integers and transform null to 0 value
+        value = parseInt(e.target.value);
+        if (isNaN(value)) {
+          value = 1;
+        }
+        break;
+      case "isOnSale":
+        value = e.target.checked;
+
+        break;
+      case "isFeatured":
+        // make all combinations not on sale except the combination that the user selects
+        value = e.target.checked;
+        newState.forEach((element) => {
+          element[name] = false;
+        });
+
+        break;
+
+      case "SKU":
+        value = e.target.value;
+        break;
+
+      default:
+        // code block
+        if (value == 1) {
+          value = e.target.value;
+        }
+    }
+
+    newState[index][name] = value;
+    // console.log(combsArrays[index]);
+    setCombsArrays(newState);
+    // console.log(combsArrays);
+  };
+  const deleteTableRow = (index) => {
+    let newState = [...combsArrays];
+    newState.splice(index, 1);
+    setCombsArrays(newState);
   };
   return (
     <Container fluid>
@@ -400,8 +518,12 @@ const AdminAllOrdersPage = () => {
                 >
                   <Col sm="1">
                     <button
-                      disabled={images.length <= 0 ? true : false}
-                      onClick={handelSubmit}
+                      disabled={
+                        seletedColors.length == 0 && seletedsizes.length == 0
+                          ? true
+                          : false
+                      }
+                      onClick={generateVariants}
                       className={
                         images.length <= 0
                           ? "btn btn-secondary d-inline mt-5 "
@@ -412,6 +534,201 @@ const AdminAllOrdersPage = () => {
                     </button>
                   </Col>
                 </Row>
+                {/* hon lsheghel */}
+                <>
+                  {productVariant && (
+                    <Table aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell align="right" />
+                          <TableCell align="left">
+                            <Box
+                              display="flex"
+                              justifyContent="flex-start"
+                              alignItems="center"
+                            >
+                              <Typography>Product name</Typography>
+                            </Box>
+                          </TableCell>
+                          <TableCell align="left">Price</TableCell>
+                          <TableCell align="left">Sale Price</TableCell>
+                          <TableCell align="left">Stock</TableCell>
+                          <TableCell align="left">is featured</TableCell>
+                          <TableCell align="left">SKU</TableCell>
+                          <TableCell align="left">is on sale</TableCell>
+                          <TableCell align="left" />
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {combsArrays?.map((combination, index) => (
+                          <TableRow key={index.id}>
+                            <TableCell align="right"></TableCell>
+                            <TableCell component="th" scope="row">
+                              <TextField
+                                style={{ width: 230 }}
+                                id="outlined-name"
+                                margin="dense"
+                                variant="outlined"
+                                onChange={(e) =>
+                                  handleCombinationChange(e, index)
+                                }
+                                value={combination.name}
+                                inputProps={{
+                                  name: "name",
+                                }}
+                                //fullWidth
+                              />
+                            </TableCell>
+                            <TableCell align="left">
+                              <TextField
+                                style={{ width: 80 }}
+                                id="outlined-name"
+                                margin="dense"
+                                variant="outlined"
+                                onChange={(e) =>
+                                  handleCombinationChange(e, index)
+                                }
+                                value={combination.price}
+                                inputProps={{
+                                  name: "price",
+                                }}
+                                //fullWidth
+                              />
+                            </TableCell>
+                            <TableCell align="left">
+                              <TextField
+                                style={{ width: 80 }}
+                                id="outlined-name"
+                                margin="dense"
+                                variant="outlined"
+                                onChange={(e) =>
+                                  handleCombinationChange(e, index)
+                                }
+                                value={combination.salePrice}
+                                inputProps={{
+                                  name: "salePrice",
+                                }}
+                                //fullWidth
+                              />
+                            </TableCell>
+                            <TableCell align="left">
+                              <TextField
+                                style={{ width: 80 }}
+                                id="outlined-name"
+                                margin="dense"
+                                variant="outlined"
+                                onChange={(e) =>
+                                  handleCombinationChange(e, index)
+                                }
+                                value={combination.stock}
+                                inputProps={{
+                                  name: "stock",
+                                }}
+                                //fullWidth
+                              />
+                            </TableCell>
+                            <TableCell align="left">
+                              <FormControl>
+                                <RadioGroup
+                                  aria-labelledby="demo-radio-buttons-group-label"
+                                  // defaultValue={combination.isFeatured}
+                                  name="isFeatured"
+                                  onChange={(e) =>
+                                    handleCombinationChange(e, index)
+                                  }
+                                >
+                                  <Radio
+                                    classes={{
+                                      root: classes.radio,
+                                      checked: classes.checked,
+                                    }}
+                                    value={index}
+                                    checked={combination.isFeatured}
+                                  />
+                                </RadioGroup>
+                              </FormControl>
+                            </TableCell>
+                            <TableCell align="left">
+                              <TextField
+                                style={{ width: 230 }}
+                                id="outlined-name"
+                                margin="dense"
+                                variant="outlined"
+                                onChange={(e) =>
+                                  handleCombinationChange(e, index)
+                                }
+                                value={combination.SKU}
+                                inputProps={{
+                                  name: "SKU",
+                                }}
+                                //fullWidth
+                              />
+                            </TableCell>
+                            <TableCell align="left">
+                              <FormGroup>
+                                <FormControlLabel
+                                  control={
+                                    <Switch
+                                      classes={lovelyStyles}
+                                      defaultChecked={false}
+                                      // color="primary"
+                                      name="isOnSale"
+                                      onChange={(e) =>
+                                        handleCombinationChange(e, index)
+                                      }
+                                    />
+                                  }
+                                  name
+                                />
+                              </FormGroup>
+                            </TableCell>
+                            <TableCell align="left">
+                              <IconButton onClick={() => deleteTableRow(index)}>
+                                <DeleteForeverIcon />
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {/* //////////////////////////////////////////// */}
+                      </TableBody>
+                    </Table>
+                  )}
+                  {/* <div
+                    xs={12}
+                    style={{
+                      marginTop: 20,
+                      marginBottom: 20,
+                      display: "flex",
+                      flex: 1,
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      //  backgroundColor: "red",
+                    }}
+                  >
+                    <Button
+                      //className={classes.buttons}
+                      disabled={isLoadingSave}
+                      color="primary"
+                      variant="contained"
+                      component="span"
+                      // style={{
+                      //   marginTop: "20px",
+                      //   height: 40,
+                      //   display: "flex",
+                      //   alignSelf: "center",
+                      // }}
+                      onClick={() => handleProductCombinations(combsArrays)}
+                    >
+                      {isLoadingSave && (
+                        <CircularProgress
+                          size={15}
+                          style={{ marginRight: "1em" }}
+                        />
+                      )}
+                      Save products
+                    </Button>
+                  </div> */}
+                </>
               </Container>
             </AccordionDetails>
           </Accordion>

@@ -20,9 +20,12 @@ import { useInUpdateDataWithImage } from "../../hooks/useUpdateData";
 
 //create products with pagination
 export const createProductVariant = (productID, data) => async (dispatch) => {
+  // console.log(
+  //   "product :" + JSON.stringify(productID) + "  " + JSON.stringify(data)
+  // );
   try {
     const response = await useInsertData(
-      `/api/v1/selectedVariants${productID}`,
+      `/api/v1/selectedVariants/${productID}`,
       data
     );
     dispatch({

@@ -29,7 +29,12 @@ const AdminAddProductsHook = () => {
   const category = useSelector((state) => state.allCategory.category);
   //get last brand state from redux
   const brand = useSelector((state) => state.allBrand.brand);
-
+  //get create meesage
+  const product = useSelector((state) => state.allproducts.products);
+  //get create meesage
+  const productVariant = useSelector(
+    (state) => state.allproducts.productVariants
+  );
   //get last sub cat state from redux
   const subCat = useSelector((state) => state.subCategory.subcategory);
   const [seletedColors, setseletedColors] = useState([]);
@@ -88,6 +93,7 @@ const AdminAddProductsHook = () => {
   const [subCatID, setSubCatID] = useState([]);
   const [seletedSubID, setSeletedSubID] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [VariantLoading, setVariantLoading] = useState(true);
 
   console.log(data);
   //to change name state
@@ -169,11 +175,14 @@ const AdminAddProductsHook = () => {
     seletedsizes.forEach((element) => {
       newSelectedsizes.push(element.name);
     });
-    setTimeout(async () => {
-      setLoading(true);
-      dispatch(createProductVariant(product._id, "data"));
-      setLoading(false);
-    }, 1000);
+    setVariantLoading(true);
+    dispatch(
+      createProductVariant(product.data.data.id, {
+        colors: newSelectedcolors,
+        sizes: newSelectedsizes,
+      })
+    );
+    setVariantLoading(false);
   };
   //to save data
   const handelSubmit = async (e) => {
@@ -203,29 +212,18 @@ const AdminAddProductsHook = () => {
     formData.append("category", data.category);
     formData.append("brand", data.brand);
 
-    // setTimeout(() => {
     formData.append("imageCover", imgCover);
     itemImages.map((item) => formData.append("images", item));
-    // }, 1000);
 
-    // setTimeout(() => {
-    //   console.log(imgCover);
-    //   console.log(itemImages);
-    // }, 1000);
     colors.map((color) => formData.append("availableColors", color));
     seletedSubID.map((item) => formData.append("subcategory", item._id));
     for (var pair of formData.entries()) {
       console.log(pair[0] + ", " + pair[1]);
     }
-    setTimeout(async () => {
-      setLoading(true);
-      await dispatch(createProduct(formData));
-      setLoading(false);
-    }, 1000);
+    setLoading(true);
+    await dispatch(createProduct(formData));
+    setLoading(false);
   };
-
-  //get create meesage
-  const product = useSelector((state) => state.allproducts.products);
 
   useEffect(() => {
     if (loading === false) {
@@ -251,7 +249,20 @@ const AdminAddProductsHook = () => {
       }
     }
   }, [loading]);
+  // useEffect(() => {
+  //   if (VariantLoading === false) {
+  //     setTimeout(() => setLoading(true), 1500);
 
+  //     if (productVariant.combos) {
+  //       console.log("products variants : " + productVariant);
+  //       if (productVariant.combos.length > 0) {
+  //         notify("generated", "success");
+  //       } else {
+  //         notify("oh no ! there is a problem ", "error");
+  //       }
+  //     }
+  //   }
+  // }, [VariantLoading]);
   return [
     onChangeDesName,
     onChangeQty,
@@ -289,6 +300,9 @@ const AdminAddProductsHook = () => {
     onRemoveColor,
     onSelectSize,
     onRemoveSize,
+    generateVariants,
+    seletedColors,
+    seletedsizes,
   ];
 };
 

@@ -34,7 +34,7 @@ const productsReducer = (state = inital, action) => {
     case CREATE_PRODUCTS_VARIANT:
       return {
         ...state,
-        productVariants: action.payload,
+        productVariants: action.payload.data.data,
         loading: false,
       };
 
