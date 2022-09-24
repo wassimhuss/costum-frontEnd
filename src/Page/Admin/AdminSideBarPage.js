@@ -22,7 +22,7 @@ import { useFormik, Form } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { CompactPicker } from "react-color";
 import add from "../../images/add.png";
-
+import avatar from "../../images/avatar.png";
 import {
   Avatar,
   Box,
@@ -59,6 +59,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 const AdminAllOrdersPage = () => {
+  const [img, setImg] = useState(avatar);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [
     onChangeDesName,
     onChangeQty,
@@ -100,7 +102,6 @@ const AdminAllOrdersPage = () => {
     seletedColors,
     seletedsizes,
   ] = AdminAddProductsHook();
-  console.log(seletedColors.length + " " + seletedsizes.length);
   const onSubmit = async (values, actions) => {
     handleNextAccordion("mediaPanel");
     setData(values);
@@ -165,10 +166,34 @@ const AdminAllOrdersPage = () => {
     (state) => state.allproducts.productVariants
   );
   const [combsArrays, setCombsArrays] = useState([
-    "dress_blue_small",
-    "dress_blue_medium",
-    "dress_yellow_small",
-    "dress_yellow_medium",
+    {
+      combinationName: "dress_blue_small",
+      quantity: "",
+      price: "",
+      priceAfterDiscount: "",
+      images: "",
+    },
+    {
+      combinationName: "dress_blue_medium",
+      quantity: "",
+      price: "",
+      priceAfterDiscount: "",
+      images: "",
+    },
+    {
+      combinationName: "dress_yellow_small",
+      quantity: "",
+      price: "",
+      priceAfterDiscount: "",
+      images: "",
+    },
+    {
+      combinationName: "dress_yellow_medium",
+      quantity: "",
+      price: "",
+      priceAfterDiscount: "",
+      images: "",
+    },
   ]);
   const handleCombinationChange = (e, index) => {
     let newState = [...combsArrays];
@@ -176,7 +201,7 @@ const AdminAllOrdersPage = () => {
     let value;
     switch (name) {
       // this case to make function behaive differntly depending on type of inputfield
-      case "name":
+      case "combinationName":
         value = e.target.value;
         // makeUniqueStringIdentity(value);
         break;
@@ -187,35 +212,27 @@ const AdminAllOrdersPage = () => {
           value = 1;
         }
         break;
-      case "salePrice":
+      case "priceAfterDiscount":
         // now keyboard takes only integers and transform null to 0 value
         value = parseInt(e.target.value);
         if (isNaN(value)) {
           value = 1;
         }
         break;
-      case "stock":
+      case "quantity":
         // now keyboard takes only integers and transform null to 0 value
         value = parseInt(e.target.value);
         if (isNaN(value)) {
           value = 1;
         }
         break;
-      case "isOnSale":
-        value = e.target.checked;
-
-        break;
-      case "isFeatured":
-        // make all combinations not on sale except the combination that the user selects
-        value = e.target.checked;
-        newState.forEach((element) => {
-          element[name] = false;
-        });
-
-        break;
-
-      case "SKU":
-        value = e.target.value;
+      case "images":
+        // now keyboard takes only integers and transform null to 0 value
+        if (e.target.files && e.target.files[0]) {
+          //setImg(URL.createObjectURL(e.target.files[0]));
+          //setSelectedFile(e.target.files[0]);
+          value = e.target.files[0];
+        }
         break;
 
       default:
@@ -226,9 +243,9 @@ const AdminAllOrdersPage = () => {
     }
 
     newState[index][name] = value;
-    // console.log(combsArrays[index]);
+    console.log(combsArrays[index]);
     setCombsArrays(newState);
-    // console.log(combsArrays);
+    //console.log(combsArrays);
   };
   const deleteTableRow = (index) => {
     let newState = [...combsArrays];
@@ -570,9 +587,9 @@ const AdminAllOrdersPage = () => {
                                 onChange={(e) =>
                                   handleCombinationChange(e, index)
                                 }
-                                value={combination}
+                                value={combination.combinationName}
                                 inputProps={{
-                                  name: "name",
+                                  name: "combinationName",
                                 }}
                               />
                             </TableCell>
@@ -600,9 +617,9 @@ const AdminAllOrdersPage = () => {
                                 onChange={(e) =>
                                   handleCombinationChange(e, index)
                                 }
-                                value={combination.salePrice}
+                                value={combination.priceAfterDiscount}
                                 inputProps={{
-                                  name: "salePrice",
+                                  name: "priceAfterDiscount",
                                 }}
                               />
                             </TableCell>
@@ -615,46 +632,49 @@ const AdminAllOrdersPage = () => {
                                 onChange={(e) =>
                                   handleCombinationChange(e, index)
                                 }
-                                value={combination.stock}
+                                //  value={combination.quantity}
                                 inputProps={{
-                                  name: "stock",
+                                  name: "quantity",
                                 }}
                               />
                             </TableCell>
 
                             <TableCell align="left">
-                              <TextField
-                                style={{ width: 100 }}
-                                id="outlined-name"
-                                margin="dense"
-                                variant="outlined"
-                                onChange={(e) =>
-                                  handleCombinationChange(e, index)
-                                }
-                                value={combination.SKU}
-                                inputProps={{
-                                  name: "SKU",
-                                }}
-                              />
-                            </TableCell>
-                            {/* <TableCell align="left">
-                              <FormGroup>
-                                <FormControlLabel
-                                  control={
-                                    <Switch
-                                      classes={lovelyStyles}
-                                      defaultChecked={false}
-                                      // color="primary"
-                                      name="isOnSale"
-                                      onChange={(e) =>
-                                        handleCombinationChange(e, index)
-                                      }
-                                    />
-                                  }
-                                  name
+                              <div>
+                                <label for="upload-photo">
+                                  <img
+                                    src={img}
+                                    alt="fzx"
+                                    height="100px"
+                                    width="120px"
+                                    style={{ cursor: "pointer" }}
+                                  />
+                                </label>
+                                <input
+                                  type="file"
+                                  name="photo"
+                                  onChange={(e) => console.log(index)}
+                                  id={`upload-photo-${index}`}
                                 />
-                              </FormGroup>
-                            </TableCell> */}
+                              </div>
+                              {/* <div>
+                                <label for="upload-photo">
+                                  <img
+                                    src={img}
+                                    alt="fzx"
+                                    height="100px"
+                                    width="120px"
+                                    style={{ cursor: "pointer" }}
+                                  />
+                                </label>
+                                <input
+                                  type="file"
+                                  name="images"
+                                  onChange={(e) => console.log(index)}
+                                  id={`file_${index}`}
+                                />
+                              </div> */}
+                            </TableCell>
                             <TableCell align="left">
                               <IconButton onClick={() => deleteTableRow(index)}>
                                 <DeleteForeverIcon />
