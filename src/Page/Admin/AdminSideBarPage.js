@@ -243,9 +243,9 @@ const AdminAllOrdersPage = () => {
     }
 
     newState[index][name] = value;
-    console.log(combsArrays[index]);
+    //console.log(combsArrays[index]);
     setCombsArrays(newState);
-    //console.log(combsArrays);
+    console.log(combsArrays);
   };
   const deleteTableRow = (index) => {
     let newState = [...combsArrays];
@@ -641,9 +641,15 @@ const AdminAllOrdersPage = () => {
 
                             <TableCell align="left">
                               <div>
-                                <label for="upload-photo">
+                                <label for={`upload-photo-${index}`}>
                                   <img
-                                    src={img}
+                                    src={
+                                      combination.images
+                                        ? URL.createObjectURL(
+                                            combination.images
+                                          )
+                                        : img
+                                    }
                                     alt="fzx"
                                     height="100px"
                                     width="120px"
@@ -652,8 +658,15 @@ const AdminAllOrdersPage = () => {
                                 </label>
                                 <input
                                   type="file"
-                                  name="photo"
-                                  onChange={(e) => console.log(index)}
+                                  name="images"
+                                  style={{
+                                    opacity: 0,
+                                    position: "absolute",
+                                    zIndex: -1,
+                                  }}
+                                  onChange={(e) =>
+                                    handleCombinationChange(e, index)
+                                  }
                                   id={`upload-photo-${index}`}
                                 />
                               </div>
