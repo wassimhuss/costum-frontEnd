@@ -39,7 +39,7 @@ const AdminAddProductsHook = () => {
   const subCat = useSelector((state) => state.subCategory.subcategory);
   const [seletedColors, setseletedColors] = useState([]);
   const [seletedsizes, setseletedsizes] = useState([]);
-  console.log(seletedColors);
+  // console.log(seletedColors);
   const onSelect = (selectedList) => {
     setSeletedSubID(selectedList);
   };
@@ -79,7 +79,6 @@ const AdminAddProductsHook = () => {
   ]);
   //values images products
   const [images, setImages] = useState([]);
-  console.log(images);
   //values state
   const [isDisabledAccordion, setIsDisabledAccordion] = useState(true);
   const [data, setData] = useState({});
@@ -93,17 +92,17 @@ const AdminAddProductsHook = () => {
   const [subCatID, setSubCatID] = useState([]);
   const [seletedSubID, setSeletedSubID] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [Productloading, setProductLoading] = useState(false);
+  const [ProductVariantloading, setProductVariantLoading] = useState(false);
   const [VariantLoading, setVariantLoading] = useState(true);
 
-  console.log(data);
+  // console.log(data);
   //to change name state
   const onChangeProdName = (value) => {
     // event.persist();
     setProdName(value);
   };
-  console.log(
-    prodName + " " + prodDescription + " " + priceAftr + " " + priceBefore
-  );
+
   //to change name state
   const onChangeDesName = (value) => {
     // event.persist();
@@ -167,6 +166,8 @@ const AdminAddProductsHook = () => {
     return new File([u8arr], filename, { type: mime });
   }
   const generateVariants = async (e) => {
+    setProductVariantLoading(true);
+    setVariantLoading(true);
     let newSelectedcolors = [];
     let newSelectedsizes = [];
     seletedColors.forEach((element) => {
@@ -175,17 +176,21 @@ const AdminAddProductsHook = () => {
     seletedsizes.forEach((element) => {
       newSelectedsizes.push(element.name);
     });
-    setVariantLoading(true);
-    dispatch(
+
+    let result = await dispatch(
       createProductVariant(product.data.data.id, {
         colors: newSelectedcolors,
         sizes: newSelectedsizes,
       })
     );
+    // console.log("result " + result);
+    setProductVariantLoading(false);
     setVariantLoading(false);
   };
   //to save data
   const handelSubmit = async (e) => {
+    setProductLoading(true);
+    setLoading(true);
     e.preventDefault();
     if (!data.productName) {
       notify("please fill all fields", "warn");
@@ -217,12 +222,13 @@ const AdminAddProductsHook = () => {
 
     colors.map((color) => formData.append("availableColors", color));
     seletedSubID.map((item) => formData.append("subcategory", item._id));
-    for (var pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
-    setLoading(true);
+    // for (var pair of formData.entries()) {
+    //   console.log(pair[0] + ", " + pair[1]);
+    // }
+
     await dispatch(createProduct(formData));
     setLoading(false);
+    setProductLoading(true);
   };
 
   useEffect(() => {
@@ -249,20 +255,21 @@ const AdminAddProductsHook = () => {
       }
     }
   }, [loading]);
-  // useEffect(() => {
-  //   if (VariantLoading === false) {
-  //     setTimeout(() => setLoading(true), 1500);
+  useEffect(() => {
+    if (VariantLoading === false) {
+      setVariantLoading(true);
+      // setTimeout(() => , 1500);
 
-  //     if (productVariant.combos) {
-  //       console.log("products variants : " + productVariant);
-  //       if (productVariant.combos.length > 0) {
-  //         notify("generated", "success");
-  //       } else {
-  //         notify("oh no ! there is a problem ", "error");
-  //       }
-  //     }
-  //   }
-  // }, [VariantLoading]);
+      if (productVariant) {
+        //  console.log("products variants : " + JSON.stringify(productVariant));
+        if (productVariant.combos?.length > 0) {
+          notify("generated", "success");
+        } else {
+          notify("oh no ! there is a problem ", "error");
+        }
+      }
+    }
+  }, [VariantLoading]);
   return [
     onChangeDesName,
     onChangeQty,
@@ -303,6 +310,11 @@ const AdminAddProductsHook = () => {
     generateVariants,
     seletedColors,
     seletedsizes,
+    loading,
+    setProductLoading,
+    Productloading,
+    setProductVariantLoading,
+    ProductVariantloading,
   ];
 };
 

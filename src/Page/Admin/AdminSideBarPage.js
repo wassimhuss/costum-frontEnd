@@ -101,6 +101,11 @@ const AdminAllOrdersPage = () => {
     generateVariants,
     seletedColors,
     seletedsizes,
+    loading,
+    setProductLoading,
+    Productloading,
+    setProductVariantLoading,
+    ProductVariantloading,
   ] = AdminAddProductsHook();
   const onSubmit = async (values, actions) => {
     handleNextAccordion("mediaPanel");
@@ -245,7 +250,7 @@ const AdminAllOrdersPage = () => {
     newState[index][name] = value;
     //console.log(combsArrays[index]);
     setCombsArrays(newState);
-    console.log(combsArrays);
+    // console.log(combsArrays);
   };
   const deleteTableRow = (index) => {
     let newState = [...combsArrays];
@@ -465,6 +470,12 @@ const AdminAllOrdersPage = () => {
                       }
                     >
                       create product
+                      {Productloading && (
+                        <CircularProgress
+                          size={12}
+                          style={{ marginLeft: 2, color: "white" }}
+                        />
+                      )}
                     </button>
                   </Col>
                   <Col sm="5" className="d-flex justify-content-end ">
@@ -548,12 +559,18 @@ const AdminAllOrdersPage = () => {
                       }
                     >
                       generate
+                      {ProductVariantloading && (
+                        <CircularProgress
+                          size={12}
+                          style={{ marginLeft: 2, color: "white" }}
+                        />
+                      )}
                     </button>
                   </Col>
                 </Row>
                 {/* hon lsheghel */}
                 <>
-                  {combsArrays && (
+                  {productVariant && (
                     <Table aria-label="simple table">
                       <TableHead>
                         <TableRow>
@@ -575,7 +592,7 @@ const AdminAllOrdersPage = () => {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {combsArrays?.map((combination, index) => (
+                        {combsArrays.map((combination, index) => (
                           <TableRow key={index.id}>
                             <TableCell align="right"></TableCell>
                             <TableCell component="th" scope="row">
@@ -670,23 +687,6 @@ const AdminAllOrdersPage = () => {
                                   id={`upload-photo-${index}`}
                                 />
                               </div>
-                              {/* <div>
-                                <label for="upload-photo">
-                                  <img
-                                    src={img}
-                                    alt="fzx"
-                                    height="100px"
-                                    width="120px"
-                                    style={{ cursor: "pointer" }}
-                                  />
-                                </label>
-                                <input
-                                  type="file"
-                                  name="images"
-                                  onChange={(e) => console.log(index)}
-                                  id={`file_${index}`}
-                                />
-                              </div> */}
                             </TableCell>
                             <TableCell align="left">
                               <IconButton onClick={() => deleteTableRow(index)}>
