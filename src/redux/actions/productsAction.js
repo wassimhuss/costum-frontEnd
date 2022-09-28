@@ -13,26 +13,28 @@ import {
   GET_PRODUCT_DETALIS,
   GET_ERROR,
   CREATE_PRODUCTS_VARIANT,
+  DELETE_PRODUCTS_VARIANT,
 } from "../type";
 import { useGetData } from "./../../hooks/useGetData";
 import useDeleteData from "./../../hooks/useDeleteData";
 import { useInUpdateDataWithImage } from "../../hooks/useUpdateData";
 
-//create products with pagination
+//create product variant
 export const createProductVariant = (productID, data) => async (dispatch) => {
   // console.log(
   //   "product :" + JSON.stringify(productID) + "  " + JSON.stringify(data)
   // );
   try {
-    const response = await useInsertData(
+    const res = await useInsertData(
       `/api/v1/selectedVariants/${productID}`,
       data
     );
     dispatch({
       type: CREATE_PRODUCTS_VARIANT,
-      payload: response,
+      payload: res,
       loading: true,
     });
+    return res.data.data;
   } catch (e) {
     dispatch({
       type: GET_ERROR,
@@ -40,6 +42,30 @@ export const createProductVariant = (productID, data) => async (dispatch) => {
     });
   }
 };
+//delete product variant
+export const deleteProductVariant =
+  (variantID, productID) => async (dispatch) => {
+    console.log(
+      "product :" + JSON.stringify(productID) + "  " + JSON.stringify(variantID)
+    );
+    try {
+      const res = await useInsertData(
+        `/api/v1/selectedVariants/delete/${variantID}`,
+        productID
+      );
+      dispatch({
+        type: DELETE_PRODUCTS_VARIANT,
+        payload: res,
+        loading: true,
+      });
+      return res;
+    } catch (e) {
+      dispatch({
+        type: GET_ERROR,
+        payload: "Error  " + e,
+      });
+    }
+  };
 //create products with pagination
 export const createProduct = (formatData) => async (dispatch) => {
   try {
@@ -52,6 +78,7 @@ export const createProduct = (formatData) => async (dispatch) => {
       payload: response,
       loading: true,
     });
+    return response.data.data;
   } catch (e) {
     dispatch({
       type: GET_ERROR,

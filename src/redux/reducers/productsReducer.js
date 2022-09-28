@@ -9,6 +9,7 @@ import {
   GET_ALL_PRODUCTS,
   GET_ERROR,
   CREATE_PRODUCTS_VARIANT,
+  DELETE_PRODUCTS_VARIANT,
 } from "../type";
 
 const inital = {
@@ -35,6 +36,12 @@ const productsReducer = (state = inital, action) => {
       return {
         ...state,
         productVariants: action.payload.data.data,
+        loading: false,
+      };
+    case DELETE_PRODUCTS_VARIANT:
+      return {
+        ...state,
+        productVariants: [],
         loading: false,
       };
 

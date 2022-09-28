@@ -3,6 +3,7 @@ import { getOneCategory } from "../../redux/actions/subcategoryAction";
 import {
   createProduct,
   createProductVariant,
+  deleteProductVariant,
 } from "../../redux/actions/productsAction";
 import notify from "./../../hook/useNotifaction";
 import { useSelector, useDispatch } from "react-redux";
@@ -126,7 +127,7 @@ const AdminAddProductsHook = () => {
     event.persist();
     setShowColor(!showColor);
   };
-
+  const [combsArraysApi, setCombsArraysApi] = useState([]);
   //to show hide color picker
   const [showColor, setShowColor] = useState(false);
   //to store all pick color
@@ -176,14 +177,39 @@ const AdminAddProductsHook = () => {
     seletedsizes.forEach((element) => {
       newSelectedsizes.push(element.name);
     });
-
-    let result = await dispatch(
+    if (newSelectedcolors.length == 0 && newSelectedsizes.length == 0) {
+      return (
+        notify("please select at least one variant ", "error") +
+        setProductVariantLoading(false) +
+        setVariantLoading(false)
+      );
+    }
+    await dispatch(
       createProductVariant(product.data.data.id, {
         colors: newSelectedcolors,
         sizes: newSelectedsizes,
       })
+    ).then((res) =>
+      res
+        ? notify("generated", "success")
+        : notify("oh no ! there is a problem ", "error")
     );
-    // console.log("result " + result);
+    setProductVariantLoading(false);
+    setVariantLoading(false);
+  };
+  const deleteVariants = async (e) => {
+    await dispatch(
+      deleteProductVariant(productVariant._id, {
+        productID: product.data.data.id,
+      })
+    ).then((res) =>
+      res
+        ? notify("variants deleted", "success") +
+          setseletedColors([]) +
+          setseletedsizes([]) +
+          setCombsArraysApi([])
+        : notify("oh no ! there is a problem ", "error")
+    );
     setProductVariantLoading(false);
     setVariantLoading(false);
   };
@@ -222,13 +248,14 @@ const AdminAddProductsHook = () => {
 
     colors.map((color) => formData.append("availableColors", color));
     seletedSubID.map((item) => formData.append("subcategory", item._id));
-    // for (var pair of formData.entries()) {
-    //   console.log(pair[0] + ", " + pair[1]);
-    // }
-
-    await dispatch(createProduct(formData));
+    await dispatch(createProduct(formData)).then((response) =>
+      response
+        ? setIsDisabledAccordion(false) +
+          notify("product added succefully", "success")
+        : notify("oh no ! there is a problem ", "error")
+    );
     setLoading(false);
-    setProductLoading(true);
+    setProductLoading(false);
   };
 
   useEffect(() => {
@@ -245,31 +272,31 @@ const AdminAddProductsHook = () => {
       setSeletedSubID([]);
       setTimeout(() => setLoading(true), 1500);
 
-      if (product) {
-        if (product.status === 201) {
-          setIsDisabledAccordion(false);
-          notify("product added succefully", "success");
-        } else {
-          notify("oh no ! there is a problem ", "error");
-        }
-      }
+      // if (product) {
+      //   if (product.status === 201) {
+      //     setIsDisabledAccordion(false);
+      //     notify("product added succefully", "success");
+      //   } else {
+      //     notify("oh no ! there is a problem ", "error");
+      //   }
+      // }
     }
   }, [loading]);
-  useEffect(() => {
-    if (VariantLoading === false) {
-      setVariantLoading(true);
-      // setTimeout(() => , 1500);
+  // useEffect(() => {
+  //   if (VariantLoading === false) {
+  //     setVariantLoading(true);
+  //     // setTimeout(() => , 1500);
 
-      if (productVariant) {
-        //  console.log("products variants : " + JSON.stringify(productVariant));
-        if (productVariant.combos?.length > 0) {
-          notify("generated", "success");
-        } else {
-          notify("oh no ! there is a problem ", "error");
-        }
-      }
-    }
-  }, [VariantLoading]);
+  //     if (productVariant) {
+  //       //  console.log("products variants : " + JSON.stringify(productVariant));
+  //       if (productVariant.combos?.length > 0) {
+  //         notify("generated", "success");
+  //       } else {
+  //         notify("oh no ! there is a problem ", "error");
+  //       }
+  //     }
+  //   }
+  // }, [VariantLoading]);
   return [
     onChangeDesName,
     onChangeQty,
@@ -315,6 +342,9 @@ const AdminAddProductsHook = () => {
     Productloading,
     setProductVariantLoading,
     ProductVariantloading,
+    deleteVariants,
+    combsArraysApi,
+    setCombsArraysApi,
   ];
 };
 
