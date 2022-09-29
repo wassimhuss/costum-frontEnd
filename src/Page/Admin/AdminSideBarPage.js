@@ -45,6 +45,8 @@ import {
   IconButton,
 } from "@material-ui/core";
 import { useState } from "react";
+import notify from "../../hook/useNotifaction";
+import { createProductCombos } from "../../redux/actions/productsAction";
 const useStyles = makeStyles((theme) => ({
   buttons: {
     // alignSelf: "flex-end"
@@ -118,7 +120,7 @@ const AdminAllOrdersPage = () => {
     // actions.resetForm();
   };
   const dispatch = useDispatch();
-
+  const product = useSelector((state) => state.allproducts.products);
   const {
     values,
     errors,
@@ -158,14 +160,12 @@ const AdminAllOrdersPage = () => {
       handleNextAccordion("panel3");
     }
   }, [setIsDisabledAccordion]);
-  const classes = useStyles();
   const [expanded, setExpanded] = React.useState("panel1");
   const [isDisabledAccordion1, setIsDisabledAccordion1] = React.useState(true);
   // const [isDisabledAccordion, setIsDisabledAccordion] = React.useState(true);
   const handleAccordionChange = (isExpanded, panel) => {
     setExpanded(isExpanded ? panel : false);
   };
-  const lovelyStyles = useLovelySwitchStyles();
   const handleNextAccordion = (panel) => {
     setExpanded(panel);
   };
@@ -195,34 +195,27 @@ const AdminAllOrdersPage = () => {
       // this case to make function behaive differntly depending on type of inputfield
       case "combinationName":
         value = e.target.value;
-        // makeUniqueStringIdentity(value);
         break;
       case "price":
-        // now keyboard takes only integers and transform null to 0 value
         value = parseInt(e.target.value);
         if (isNaN(value)) {
           value = 1;
         }
         break;
       case "priceAfterDiscount":
-        // now keyboard takes only integers and transform null to 0 value
         value = parseInt(e.target.value);
         if (isNaN(value)) {
           value = 1;
         }
         break;
       case "quantity":
-        // now keyboard takes only integers and transform null to 0 value
         value = parseInt(e.target.value);
         if (isNaN(value)) {
           value = 1;
         }
         break;
       case "images":
-        // now keyboard takes only integers and transform null to 0 value
         if (e.target.files && e.target.files[0]) {
-          //setImg(URL.createObjectURL(e.target.files[0]));
-          //setSelectedFile(e.target.files[0]);
           value = e.target.files[0];
         }
         break;
@@ -244,7 +237,18 @@ const AdminAllOrdersPage = () => {
     newState.splice(index, 1);
     setCombsArraysApi(newState);
   };
-
+  const generateProductCombo = async (index) => {
+    if (combsArraysApi.length <= 0) {
+      notify("please insert at least", "warn");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("combinationName", combsArraysApi[index].combinationName);
+    formData.append("quantity", combsArraysApi[index].quantity);
+    formData.append("price", combsArraysApi[index].price);
+    formData.append("images", combsArraysApi[index].images);
+    dispatch(createProductCombos(product.data.data.id, formData));
+  };
   return (
     <Container fluid>
       <Row className="py-3">
@@ -714,6 +718,23 @@ const AdminAllOrdersPage = () => {
                                   >
                                     <DeleteForeverIcon />
                                   </IconButton>
+                                  <TableCell align="left">
+                                    <Button
+                                      // disabled={isLoadingSave}
+                                      variant="dark"
+                                      onClick={() =>
+                                        generateProductCombo(index)
+                                      }
+                                    >
+                                      {/* {isLoadingSave && (
+                        <CircularProgress
+                          size={15}
+                          style={{ marginRight: "1em" }}
+                        />
+                      )} */}
+                                      Save
+                                    </Button>
+                                  </TableCell>
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -733,10 +754,9 @@ const AdminAllOrdersPage = () => {
                           }}
                         >
                           <Button
-                            //className={classes.buttons}
                             // disabled={isLoadingSave}
                             variant="dark"
-                            //onClick={() => handleProductCombinations(combsArrays)}
+                            onClick={generateProductCombo}
                           >
                             {/* {isLoadingSave && (
                         <CircularProgress
@@ -766,41 +786,6 @@ const AdminAllOrdersPage = () => {
                     //   </Col>
                     // </Row>
                   }
-                  {/* <div
-                    xs={12}
-                    style={{
-                      marginTop: 20,
-                      marginBottom: 20,
-                      display: "flex",
-                      flex: 1,
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      //  backgroundColor: "red",
-                    }}
-                  >
-                    <Button
-                      //className={classes.buttons}
-                      disabled={isLoadingSave}
-                      color="primary"
-                      variant="contained"
-                      component="span"
-                      // style={{
-                      //   marginTop: "20px",
-                      //   height: 40,
-                      //   display: "flex",
-                      //   alignSelf: "center",
-                      // }}
-                      onClick={() => handleProductCombinations(combsArrays)}
-                    >
-                      {isLoadingSave && (
-                        <CircularProgress
-                          size={15}
-                          style={{ marginRight: "1em" }}
-                        />
-                      )}
-                      Save products
-                    </Button>
-                  </div> */}
                 </>
               </Container>
             </AccordionDetails>

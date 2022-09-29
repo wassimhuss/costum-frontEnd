@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getOneCategory } from "../../redux/actions/subcategoryAction";
 import {
   createProduct,
+  createProductCombos,
   createProductVariant,
   deleteProductVariant,
 } from "../../redux/actions/productsAction";
@@ -166,6 +167,20 @@ const AdminAddProductsHook = () => {
 
     return new File([u8arr], filename, { type: mime });
   }
+  const generateProductCombo = async (e) => {
+    for (let i = 0; i < combsArraysApi.length; i++) {
+      if (combsArraysApi.length <= 0) {
+        notify("please insert at least", "warn");
+        return;
+      }
+      const formData = new FormData();
+      formData.append("combinationName", combsArraysApi[i].combinationName);
+      formData.append("quantity", combsArraysApi[i].quantity);
+      formData.append("price", combsArraysApi[i].price);
+      formData.append("images", combsArraysApi[i].images);
+      dispatch(createProductCombos(product.data.data.id, formData));
+    }
+  };
   const generateVariants = async (e) => {
     setProductVariantLoading(true);
     setVariantLoading(true);
@@ -345,6 +360,7 @@ const AdminAddProductsHook = () => {
     deleteVariants,
     combsArraysApi,
     setCombsArraysApi,
+    generateProductCombo,
   ];
 };
 

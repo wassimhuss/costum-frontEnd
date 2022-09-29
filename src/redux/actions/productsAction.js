@@ -14,11 +14,36 @@ import {
   GET_ERROR,
   CREATE_PRODUCTS_VARIANT,
   DELETE_PRODUCTS_VARIANT,
+  CREATE_PRODUCTS_COMBOS,
 } from "../type";
 import { useGetData } from "./../../hooks/useGetData";
 import useDeleteData from "./../../hooks/useDeleteData";
 import { useInUpdateDataWithImage } from "../../hooks/useUpdateData";
 
+//create product combo
+export const createProductCombos =
+  (productID, formatData) => async (dispatch) => {
+    // console.log(
+    //   "product :" + JSON.stringify(productID) + "  " + JSON.stringify(data)
+    // );
+    try {
+      const res = await useInsertDataWithImage(
+        `/api/v1/productCombo/${productID}`,
+        formatData
+      );
+      dispatch({
+        type: CREATE_PRODUCTS_COMBOS,
+        payload: res,
+        loading: true,
+      });
+      return res.data.data;
+    } catch (e) {
+      dispatch({
+        type: GET_ERROR,
+        payload: "Error  " + e,
+      });
+    }
+  };
 //create product variant
 export const createProductVariant = (productID, data) => async (dispatch) => {
   // console.log(
