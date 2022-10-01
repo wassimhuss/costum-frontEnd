@@ -62,6 +62,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 const AdminAllOrdersPage = () => {
   const [img, setImg] = useState(avatar);
+  const [productComboLoading, setproductComboLoading] = useState(false);
+  const [productCombobutton, setproductCombobutton] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [
     onChangeDesName,
@@ -143,6 +145,7 @@ const AdminAllOrdersPage = () => {
     validationSchema: schema,
     onSubmit,
   });
+  console.log(product);
   useEffect(() => {
     if (values.category.length > 0) {
       dispatch(getOneCategory(values.category));
@@ -179,14 +182,14 @@ const AdminAllOrdersPage = () => {
       let newarr = productVariant.combos.map((str, index) => ({
         combinationName: str,
         quantity: "",
-        price: "",
+        price: product.data.data.price,
         priceAfterDiscount: "",
         images: "",
       }));
       setCombsArraysApi(newarr);
     }
   }, [productVariant]);
-  console.log(combsArraysApi);
+  // console.log(combsArraysApi);
   const handleCombinationChange = (e, index) => {
     let newState = [...combsArraysApi];
     let { name } = e.target;
@@ -199,25 +202,28 @@ const AdminAllOrdersPage = () => {
       case "price":
         value = parseInt(e.target.value);
         if (isNaN(value)) {
-          value = 1;
+          value = 0;
         }
         break;
       case "priceAfterDiscount":
         value = parseInt(e.target.value);
         if (isNaN(value)) {
-          value = 1;
+          value = 0;
         }
         break;
       case "quantity":
         value = parseInt(e.target.value);
         if (isNaN(value)) {
-          value = 1;
+          value = 0;
         }
         break;
       case "images":
         if (e.target.files && e.target.files[0]) {
           value = e.target.files[0];
         }
+        break;
+      case "saved":
+        value = true;
         break;
 
       default:
@@ -230,24 +236,43 @@ const AdminAllOrdersPage = () => {
     newState[index][name] = value;
     //console.log(combsArrays[index]);
     setCombsArraysApi(newState);
-    // console.log(combsArrays);
+    console.log(combsArraysApi);
   };
   const deleteTableRow = (index) => {
     let newState = [...combsArraysApi];
     newState.splice(index, 1);
     setCombsArraysApi(newState);
   };
-  const generateProductCombo = async (index) => {
-    if (combsArraysApi.length <= 0) {
-      notify("please insert at least", "warn");
+  const generateProductCombo = async (e, index) => {
+    if (
+      combsArraysApi[index].quantity == "" ||
+      combsArraysApi[index].combinationName == "" ||
+      combsArraysApi[index].price == ""
+    ) {
+      notify("please insert requierd fields", "warn");
       return;
     }
+    setproductComboLoading(true);
+    console.log(
+      combsArraysApi[index].combinationName +
+        " " +
+        combsArraysApi[index].price +
+        " " +
+        combsArraysApi[index].quantity
+    );
     const formData = new FormData();
     formData.append("combinationName", combsArraysApi[index].combinationName);
     formData.append("quantity", combsArraysApi[index].quantity);
     formData.append("price", combsArraysApi[index].price);
     formData.append("images", combsArraysApi[index].images);
-    dispatch(createProductCombos(product.data.data.id, formData));
+    dispatch(createProductCombos(product.data.data.id, formData)).then((res) =>
+      res
+        ? notify("product saved succefully", "success") +
+          setproductComboLoading(false) +
+          handleCombinationChange(e, index)
+        : notify("oh no ! there is a problem ", "error") +
+          setproductComboLoading(false)
+    );
   };
   return (
     <Container fluid>
@@ -592,200 +617,163 @@ const AdminAllOrdersPage = () => {
 
                 {/* hon lsheghel */}
                 <>
-                  {
-                    combsArraysApi.length > 0 ? (
-                      <>
-                        <Table aria-label="simple table">
-                          <TableHead>
-                            <TableRow>
-                              <TableCell align="right" />
-                              <TableCell align="left">
-                                <Box
-                                  display="flex"
-                                  justifyContent="flex-start"
-                                  alignItems="center"
-                                >
-                                  <Typography>Product Combo name</Typography>
-                                </Box>
+                  {combsArraysApi.length > 0 ? (
+                    <>
+                      <Table aria-label="simple table">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell align="right" />
+                            <TableCell align="left">
+                              <Box
+                                display="flex"
+                                justifyContent="flex-start"
+                                alignItems="center"
+                              >
+                                <Typography>
+                                  Product Combo name
+                                  <span style={{ color: "red" }}>*</span>
+                                </Typography>
+                              </Box>
+                            </TableCell>
+                            <TableCell align="left">
+                              Price <span style={{ color: "red" }}>*</span>
+                            </TableCell>
+                            <TableCell align="left">discount Price</TableCell>
+                            <TableCell align="left">
+                              Stock<span style={{ color: "red" }}>*</span>
+                            </TableCell>
+                            <TableCell align="left">Image</TableCell>
+                            <TableCell align="left" />
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {combsArraysApi.map((combination, index) => (
+                            <TableRow key={index.id}>
+                              <TableCell align="right"></TableCell>
+                              <TableCell component="th" scope="row">
+                                <TextField
+                                  style={{ width: 230 }}
+                                  id="outlined-name"
+                                  margin="dense"
+                                  variant="outlined"
+                                  onChange={(e) =>
+                                    handleCombinationChange(e, index)
+                                  }
+                                  value={combination.combinationName}
+                                  inputProps={{
+                                    name: "combinationName",
+                                  }}
+                                />
                               </TableCell>
-                              <TableCell align="left">Price</TableCell>
-                              <TableCell align="left">discount Price</TableCell>
-                              <TableCell align="left">Stock</TableCell>
-                              <TableCell align="left">Image</TableCell>
-                              <TableCell align="left" />
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {combsArraysApi.map((combination, index) => (
-                              <TableRow key={index.id}>
-                                <TableCell align="right"></TableCell>
-                                <TableCell component="th" scope="row">
-                                  <TextField
-                                    style={{ width: 230 }}
-                                    id="outlined-name"
-                                    margin="dense"
-                                    variant="outlined"
-                                    onChange={(e) =>
-                                      handleCombinationChange(e, index)
-                                    }
-                                    value={combination.combinationName}
-                                    inputProps={{
-                                      name: "combinationName",
-                                    }}
-                                  />
-                                </TableCell>
-                                <TableCell align="left">
-                                  <TextField
-                                    style={{ width: 80 }}
-                                    id="outlined-name"
-                                    margin="dense"
-                                    variant="outlined"
-                                    onChange={(e) =>
-                                      handleCombinationChange(e, index)
-                                    }
-                                    value={combination.price}
-                                    inputProps={{
-                                      name: "price",
-                                    }}
-                                  />
-                                </TableCell>
-                                <TableCell align="left">
-                                  <TextField
-                                    style={{ width: 80 }}
-                                    id="outlined-name"
-                                    margin="dense"
-                                    variant="outlined"
-                                    onChange={(e) =>
-                                      handleCombinationChange(e, index)
-                                    }
-                                    value={combination.priceAfterDiscount}
-                                    inputProps={{
-                                      name: "priceAfterDiscount",
-                                    }}
-                                  />
-                                </TableCell>
-                                <TableCell align="left">
-                                  <TextField
-                                    style={{ width: 80 }}
-                                    id="outlined-name"
-                                    margin="dense"
-                                    variant="outlined"
-                                    onChange={(e) =>
-                                      handleCombinationChange(e, index)
-                                    }
-                                    //  value={combination.quantity}
-                                    inputProps={{
-                                      name: "quantity",
-                                    }}
-                                  />
-                                </TableCell>
+                              <TableCell align="left">
+                                <TextField
+                                  style={{ width: 80 }}
+                                  id="outlined-name"
+                                  margin="dense"
+                                  variant="outlined"
+                                  onChange={(e) =>
+                                    handleCombinationChange(e, index)
+                                  }
+                                  value={combination.price}
+                                  inputProps={{
+                                    name: "price",
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell align="left">
+                                <TextField
+                                  style={{ width: 80 }}
+                                  id="outlined-name"
+                                  margin="dense"
+                                  variant="outlined"
+                                  onChange={(e) =>
+                                    handleCombinationChange(e, index)
+                                  }
+                                  value={combination.priceAfterDiscount}
+                                  inputProps={{
+                                    name: "priceAfterDiscount",
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell align="left">
+                                <TextField
+                                  style={{ width: 80 }}
+                                  id="outlined-name"
+                                  margin="dense"
+                                  variant="outlined"
+                                  onChange={(e) =>
+                                    handleCombinationChange(e, index)
+                                  }
+                                  //  value={combination.quantity}
+                                  inputProps={{
+                                    name: "quantity",
+                                  }}
+                                />
+                              </TableCell>
 
-                                <TableCell align="left">
-                                  <div>
-                                    <label for={`upload-photo-${index}`}>
-                                      <img
-                                        src={
-                                          combination.images
-                                            ? URL.createObjectURL(
-                                                combination.images
-                                              )
-                                            : img
-                                        }
-                                        alt="fzx"
-                                        height="100px"
-                                        width="120px"
-                                        style={{ cursor: "pointer" }}
-                                      />
-                                    </label>
-                                    <input
-                                      type="file"
-                                      name="images"
-                                      style={{
-                                        opacity: 0,
-                                        position: "absolute",
-                                        zIndex: -1,
-                                      }}
-                                      onChange={(e) =>
-                                        handleCombinationChange(e, index)
+                              <TableCell align="left">
+                                <div>
+                                  <label for={`upload-photo-${index}`}>
+                                    <img
+                                      src={
+                                        combination.images
+                                          ? URL.createObjectURL(
+                                              combination.images
+                                            )
+                                          : img
                                       }
-                                      id={`upload-photo-${index}`}
+                                      alt="fzx"
+                                      height="100px"
+                                      width="120px"
+                                      style={{ cursor: "pointer" }}
                                     />
-                                  </div>
-                                </TableCell>
-                                <TableCell align="left">
-                                  <IconButton
-                                    onClick={() => deleteTableRow(index)}
-                                  >
-                                    <DeleteForeverIcon />
-                                  </IconButton>
-                                  <TableCell align="left">
-                                    <Button
-                                      // disabled={isLoadingSave}
-                                      variant="dark"
-                                      onClick={() =>
-                                        generateProductCombo(index)
-                                      }
-                                    >
-                                      {/* {isLoadingSave && (
-                        <CircularProgress
-                          size={15}
-                          style={{ marginRight: "1em" }}
-                        />
-                      )} */}
-                                      Save
-                                    </Button>
-                                  </TableCell>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                            {/* //////////////////////////////////////////// */}
-                          </TableBody>
-                        </Table>
-                        <div
-                          xs={12}
-                          style={{
-                            marginTop: 20,
-                            marginBottom: 20,
-                            display: "flex",
-                            flex: 1,
-                            flexDirection: "row",
-                            justifyContent: "center",
-                            //  backgroundColor: "red",
-                          }}
-                        >
-                          <Button
-                            // disabled={isLoadingSave}
-                            variant="dark"
-                            onClick={generateProductCombo}
-                          >
-                            {/* {isLoadingSave && (
-                        <CircularProgress
-                          size={15}
-                          style={{ marginRight: "1em" }}
-                        />
-                      )} */}
-                            Save products
-                          </Button>
-                        </div>
-                      </>
-                    ) : null
-                    // <Row
-                    //   className="justify-content-center"
-                    //   style={{ width: "90%" }}
-                    // >
-                    //   <Col
-                    //     sm="12"
-                    //     // style={{ backgroundColor: "blue" }}
-                    //     className="d-flex justify-content-center"
-                    //   >
-                    //     <div style={{ color: "black" }}>
-                    //       Please press{" "}
-                    //       <span style={{ color: "red" }}>Undo</span> To
-                    //       Re-selecet Your Variants!
-                    //     </div>
-                    //   </Col>
-                    // </Row>
-                  }
+                                  </label>
+                                  <input
+                                    type="file"
+                                    name="images"
+                                    style={{
+                                      opacity: 0,
+                                      position: "absolute",
+                                      zIndex: -1,
+                                    }}
+                                    onChange={(e) =>
+                                      handleCombinationChange(e, index)
+                                    }
+                                    id={`upload-photo-${index}`}
+                                  />
+                                </div>
+                              </TableCell>
+                              <TableCell align="left">
+                                <IconButton
+                                  onClick={() => deleteTableRow(index)}
+                                >
+                                  <DeleteForeverIcon />
+                                </IconButton>
+                              </TableCell>
+                              <TableCell align="left">
+                                <Button
+                                  name="saved"
+                                  disabled={combination.saved}
+                                  variant="dark"
+                                  onClick={(e) =>
+                                    generateProductCombo(e, index)
+                                  }
+                                >
+                                  Save
+                                  {productComboLoading && (
+                                    <CircularProgress
+                                      size={12}
+                                      style={{ marginLeft: 2, color: "white" }}
+                                    />
+                                  )}
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </>
+                  ) : null}
                 </>
               </Container>
             </AccordionDetails>

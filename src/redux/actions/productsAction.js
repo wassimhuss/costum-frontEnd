@@ -23,9 +23,6 @@ import { useInUpdateDataWithImage } from "../../hooks/useUpdateData";
 //create product combo
 export const createProductCombos =
   (productID, formatData) => async (dispatch) => {
-    // console.log(
-    //   "product :" + JSON.stringify(productID) + "  " + JSON.stringify(data)
-    // );
     try {
       const res = await useInsertDataWithImage(
         `/api/v1/productCombo/${productID}`,
@@ -46,9 +43,6 @@ export const createProductCombos =
   };
 //create product variant
 export const createProductVariant = (productID, data) => async (dispatch) => {
-  // console.log(
-  //   "product :" + JSON.stringify(productID) + "  " + JSON.stringify(data)
-  // );
   try {
     const res = await useInsertData(
       `/api/v1/selectedVariants/${productID}`,
