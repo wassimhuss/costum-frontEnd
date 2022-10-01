@@ -179,16 +179,6 @@ const AdminAddProductsHook = () => {
     for (var pair of formData.entries()) {
       console.log(pair[0] + ", " + pair[1]);
     }
-    // for (let i = 0; i < combsArraysApi.length; i++) {
-    //   if (combsArraysApi.length <= 0) {
-    //     notify("please insert at least", "warn");
-    //     return;
-    //   }
-    //   const formData = new FormData();
-    //   formData.append("combinationName", combsArraysApi[i].combinationName);
-    //   formData.append("quantity", combsArraysApi[i].quantity);
-    //   formData.append("price", combsArraysApi[i].price);
-    //   formData.append("images", combsArraysApi[i].images);
     dispatch(createProductCombos(product.data.data.id, formData));
     // }
   };

@@ -3,7 +3,15 @@ import { Col, Card, Row, Modal, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import prod1 from "../../images/prod1.png";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteProducts } from "../../redux/actions/productsAction";
+import { deleteBrand } from "../../redux/actions/brandAction";
+import notify from "../../hook/useNotifaction";
+import { ToastContainer } from "react-toastify";
+import { makeStyles } from "@material-ui/core";
+import Backdrop from "@material-ui/core/Backdrop";
+import ModalMui from "@material-ui/core/Modal";
+import Fade from "@material-ui/core/Fade";
+import AdminAddBrand from "./AdminAddBrand";
+
 const AdminItemsCard = ({ item }) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -12,9 +20,15 @@ const AdminItemsCard = ({ item }) => {
   const dispatch = useDispatch();
 
   const handelDelete = async () => {
-    await dispatch(deleteProducts(item._id));
+    await dispatch(deleteBrand(item._id)).then((res) =>
+      res
+        ? notify("brand deleted successfuly", "success") +
+          setTimeout(() => {
+            window.location.reload();
+          }, 1250)
+        : notify("oh no ! there is a problem ", "error")
+    );
     setShow(false);
-    window.location.reload();
   };
 
   return (
@@ -98,6 +112,7 @@ const AdminItemsCard = ({ item }) => {
           </Card.Body>
         </div>
       </Card>
+      <ToastContainer />
     </Col>
   );
 };

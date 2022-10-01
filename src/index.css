@@ -491,6 +491,15 @@ body {
   line-height: 28px;
   text-align: right;
 }
+.admin-content-text-2 {
+  color: #555550;
+  font-family: Almarai;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 28px;
+  text-align: left;
+}
 .item-delete-edit {
   color: #979797;
   font-family: "Almarai";

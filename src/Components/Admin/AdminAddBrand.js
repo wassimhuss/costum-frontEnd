@@ -15,9 +15,9 @@ const AdminAddBrand = () => {
   ] = AddBrandHook();
   return (
     <div>
-      <Row className="justify-content-start">
-        <div className="admin-content-text pb-4">add new brand</div>
-        <Col sm="5">
+      <Row className="justify-content-center">
+        <div className="admin-content-text-2 pb-4">add new brand</div>
+        <Col sm="12">
           <div className="text-form pb-2">brand image</div>
           <div>
             <label for="upload-photo">
@@ -46,7 +46,7 @@ const AdminAddBrand = () => {
         </Col>
       </Row>
       <Row>
-        <Col sm="5" className="d-flex justify-content-end ">
+        <Col sm="12" className="d-flex justify-content-end ">
           <button onClick={handelSubmit} className="btn-save d-inline mt-2 ">
             create
           </button>
