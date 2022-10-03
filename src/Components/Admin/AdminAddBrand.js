@@ -3,7 +3,7 @@ import { Row, Col, Spinner } from "react-bootstrap";
 import { ToastContainer } from "react-toastify";
 import avatar from "../../images/avatar.png";
 import AddBrandHook from "./../../hook/brand/add-brand-hook";
-const AdminAddBrand = () => {
+const AdminAddBrand = ({ onClose }) => {
   const [
     img,
     name,

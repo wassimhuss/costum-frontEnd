@@ -9,6 +9,7 @@ import {
 import { useGetData } from "../../hooks/useGetData";
 import { useInsertDataWithImage } from "../../hooks/useInsertData";
 import useDeleteData from "../../hooks/useDeleteData";
+import { useInUpdateDataWithImage } from "../../hooks/useUpdateData";
 
 //get all Brand
 export const getAllBrand = (limit) => async (dispatch) => {
@@ -84,9 +85,10 @@ export const createBrand = (formData) => async (dispatch) => {
     const response = await useInsertDataWithImage(`/api/v1/brands`, formData);
     dispatch({
       type: CREATE_BRAND,
-      payload: response,
+      payload: response.data.data,
       loading: true,
     });
+    return response;
   } catch (e) {
     dispatch({
       type: GET_ERROR,
@@ -94,7 +96,26 @@ export const createBrand = (formData) => async (dispatch) => {
     });
   }
 };
-
+//edit brand with pagination
+export const editBrand = (formData, id) => async (dispatch) => {
+  try {
+    const response = await useInUpdateDataWithImage(
+      `/api/v1/brands/${id}`,
+      formData
+    );
+    dispatch({
+      type: CREATE_BRAND,
+      payload: response.data.data,
+      loading: true,
+    });
+    return response;
+  } catch (e) {
+    dispatch({
+      type: GET_ERROR,
+      payload: "Error " + e,
+    });
+  }
+};
 //delete brand with id
 export const deleteBrand = (id) => async (dispatch) => {
   try {

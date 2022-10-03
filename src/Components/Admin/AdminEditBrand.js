@@ -8,6 +8,7 @@ import ModalMui from "@material-ui/core/Modal";
 import Fade from "@material-ui/core/Fade";
 import AdminAddBrand from "./AdminAddBrand";
 import { useState } from "react";
+import AdminEditBrandModal from "./AdminEditBrandModal";
 const useStyles = makeStyles((theme) => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
@@ -69,7 +70,7 @@ const AdminAllProducts = ({ brands }) => {
       >
         <Fade in={editBrandModal}>
           <div className={classes.paper}>
-            <AdminAddBrand />
+            <AdminAddBrand onClose={closeEditBrandModal} />
           </div>
         </Fade>
       </ModalMui>

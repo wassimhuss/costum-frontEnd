@@ -11,8 +11,28 @@ import Backdrop from "@material-ui/core/Backdrop";
 import ModalMui from "@material-ui/core/Modal";
 import Fade from "@material-ui/core/Fade";
 import AdminAddBrand from "./AdminAddBrand";
-
+import AdminEditBrandModal from "./AdminEditBrandModal";
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: "0 20px 60px -2px rgba(27,33,58,.4)",
+    padding: theme.spacing(2, 4, 3),
+    width: "60%",
+    height: "60%",
+    overflow: "hidden",
+    borderRadius: "8px",
+  },
+  modal: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+}));
 const AdminItemsCard = ({ item }) => {
+  const classes = useStyles();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -30,13 +50,19 @@ const AdminItemsCard = ({ item }) => {
     );
     setShow(false);
   };
+  const [editBrandModal, setEditBrandModal] = useState(false);
+  const openEditBrandModal = () => {
+    setEditBrandModal(true);
+  };
 
+  const closeEditBrandModal = () => {
+    setEditBrandModal(false);
+  };
   return (
     <Col xs="12" sm="6" md="5" lg="2" className="d-flex">
       <Modal show={show} onHide={handleClose}>
         <Modal.Header>
           <Modal.Title>
-            {" "}
             <div className="font">delete brand </div>
           </Modal.Title>
         </Modal.Header>
@@ -72,17 +98,13 @@ const AdminItemsCard = ({ item }) => {
             >
               delete
             </div>
-            <Link
-              to={`/admin/editproduct/${item._id}`}
-              style={{ textDecoration: "none" }}
+            <div
+              onClick={openEditBrandModal}
+              className="d-inline item-delete-edit"
+              style={{ color: "green" }}
             >
-              <div
-                className="d-inline item-delete-edit"
-                style={{ color: "green" }}
-              >
-                edit
-              </div>
-            </Link>
+              edit
+            </div>
           </Col>
         </Row>
         <div style={{ textDecoration: "none" }}>
@@ -113,6 +135,23 @@ const AdminItemsCard = ({ item }) => {
         </div>
       </Card>
       <ToastContainer />
+      <ModalMui
+        disableAutoFocus={true}
+        className={classes.modal}
+        open={editBrandModal}
+        onClose={closeEditBrandModal}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={editBrandModal}>
+          <div className={classes.paper}>
+            <AdminEditBrandModal onClose={closeEditBrandModal} item={item} />
+          </div>
+        </Fade>
+      </ModalMui>
     </Col>
   );
 };
