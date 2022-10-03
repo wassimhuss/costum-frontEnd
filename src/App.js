@@ -35,6 +35,7 @@ import ProtectedRoute from "./Components/Uitily/ProtectedRoute";
 import { useEffect, useState } from "react";
 import ProductsByCategory from "./Page/Products/ProductsByCategory";
 import ProductsByBrand from "./Page/Products/ProductsByBrand";
+import AdminEditSubCategory from "./Components/Admin/AdminEditSubCategory";
 function App() {
   const [isUser, isAdmin, userData] = ProtectedRouteHook();
 
@@ -78,6 +79,10 @@ function App() {
             <Route
               path="/admin/addcategory"
               element={<AdminAddCategoryPage />}
+            />
+            <Route
+              path="/admin/category-subs/:id"
+              element={<AdminEditSubCategory />}
             />
             <Route
               path="/admin/addsubcategory"

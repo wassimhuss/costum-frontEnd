@@ -12,7 +12,7 @@ import ModalMui from "@material-ui/core/Modal";
 import Fade from "@material-ui/core/Fade";
 import AdminAddBrand from "./AdminAddBrand";
 
-const AdminItemsCard = ({ item }) => {
+const AdminItemsCard = ({ item, category }) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -30,13 +30,11 @@ const AdminItemsCard = ({ item }) => {
     );
     setShow(false);
   };
-
   return (
     <Col xs="12" sm="6" md="5" lg="2" className="d-flex">
       <Modal show={show} onHide={handleClose}>
         <Modal.Header>
           <Modal.Title>
-            {" "}
             <div className="font">delete brand </div>
           </Modal.Title>
         </Modal.Header>
@@ -73,16 +71,29 @@ const AdminItemsCard = ({ item }) => {
               delete
             </div>
             <Link
-              to={`/admin/editproduct/${item._id}`}
+              to={`/admin/editBrand/${item._id}`}
               style={{ textDecoration: "none" }}
             >
               <div
                 className="d-inline item-delete-edit"
-                style={{ color: "green" }}
+                style={{ color: "black" }}
               >
                 edit
               </div>
             </Link>
+            {category ? (
+              <Link
+                to={`/admin/category-subs/${item._id}`}
+                style={{ textDecoration: "none" }}
+              >
+                <div
+                  className="d-inline item-delete-edit"
+                  style={{ color: "black" }}
+                >
+                  view
+                </div>
+              </Link>
+            ) : null}
           </Col>
         </Row>
         <div style={{ textDecoration: "none" }}>
