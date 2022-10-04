@@ -3,9 +3,11 @@ import {
   GET_ERROR,
   GET_ONE_CATEGORY,
   CREATE_CATEGORY,
+  DELETE_BRAND,
 } from "../type";
 import { useGetData } from "../../hooks/useGetData";
 import { useInsertDataWithImage } from "../../hooks/useInsertData";
+import useDeleteData from "../../hooks/useDeleteData";
 //get all category
 export const getAllCategory = (limit) => async (dispatch) => {
   try {
@@ -88,6 +90,24 @@ export const createCategory = (formData) => async (dispatch) => {
       payload: response,
       loading: true,
     });
+  } catch (e) {
+    dispatch({
+      type: GET_ERROR,
+      payload: "Error " + e,
+    });
+  }
+};
+//delete category with id
+export const deleteCategory = (id) => async (dispatch) => {
+  try {
+    const response = await useDeleteData(`/api/v1/categories/${id}`);
+
+    dispatch({
+      type: DELETE_BRAND,
+      payload: response,
+      loading: true,
+    });
+    return response;
   } catch (e) {
     dispatch({
       type: GET_ERROR,

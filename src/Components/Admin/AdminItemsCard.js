@@ -11,8 +11,10 @@ import Backdrop from "@material-ui/core/Backdrop";
 import ModalMui from "@material-ui/core/Modal";
 import Fade from "@material-ui/core/Fade";
 import AdminAddBrand from "./AdminAddBrand";
+import { deleteCategory } from "../../redux/actions/categoryAction";
+import { deleteSubCategory } from "../../redux/actions/subcategoryAction";
 
-const AdminItemsCard = ({ item, category }) => {
+const AdminItemsCard = ({ item, category, subCategory }) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -20,26 +22,49 @@ const AdminItemsCard = ({ item, category }) => {
   const dispatch = useDispatch();
 
   const handelDelete = async () => {
-    await dispatch(deleteBrand(item._id)).then((res) =>
-      res
-        ? notify("brand deleted successfuly", "success") +
-          setTimeout(() => {
-            window.location.reload();
-          }, 1250)
-        : notify("oh no ! there is a problem ", "error")
-    );
-    setShow(false);
+    if (category) {
+      await dispatch(deleteCategory(item._id)).then((res) =>
+        res
+          ? notify("brand deleted successfuly", "success") +
+            setTimeout(() => {
+              window.location.reload();
+            }, 1250)
+          : notify("oh no ! there is a problem ", "error")
+      );
+    } else if (subCategory) {
+      await dispatch(deleteSubCategory(item._id)).then((res) =>
+        res
+          ? notify("brand deleted successfuly", "success") +
+            setTimeout(() => {
+              window.location.reload();
+            }, 1250)
+          : notify("oh no ! there is a problem ", "error")
+      );
+      setShow(false);
+    } else {
+      await dispatch(deleteBrand(item._id)).then((res) =>
+        res
+          ? notify("brand deleted successfuly", "success") +
+            setTimeout(() => {
+              window.location.reload();
+            }, 1250)
+          : notify("oh no ! there is a problem ", "error")
+      );
+      setShow(false);
+    }
   };
   return (
     <Col xs="12" sm="6" md="5" lg="2" className="d-flex">
       <Modal show={show} onHide={handleClose}>
         <Modal.Header>
           <Modal.Title>
-            <div className="font">delete brand </div>
+            <div className="font">delete sub-category </div>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="font">are you sure you want to delete this brand</div>
+          <div className="font">
+            are you sure you want to delete this sub-category
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button className="font" variant="success" onClick={handleClose}>
@@ -71,7 +96,7 @@ const AdminItemsCard = ({ item, category }) => {
               delete
             </div>
             <Link
-              to={`/admin/editBrand/${item._id}`}
+              to={`/admin/category-subs/${item._id}`}
               style={{ textDecoration: "none" }}
             >
               <div

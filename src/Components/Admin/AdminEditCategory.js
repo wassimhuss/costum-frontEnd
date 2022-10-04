@@ -69,7 +69,7 @@ const AdminEditCategory = ({ categories, category }) => {
       >
         <Fade in={editBrandModal}>
           <div className={classes.paper}>
-            {category ? <AdminAddCategory /> : <AdminAddCategory />}
+            <AdminAddCategory />
           </div>
         </Fade>
       </ModalMui>

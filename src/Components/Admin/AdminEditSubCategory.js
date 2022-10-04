@@ -6,8 +6,8 @@ import { makeStyles } from "@material-ui/core";
 import Backdrop from "@material-ui/core/Backdrop";
 import ModalMui from "@material-ui/core/Modal";
 import Fade from "@material-ui/core/Fade";
-import AdminAddCategory from "./AdminAddCategory";
 import AdminAddSubCategory from "./AdminAddSubCategory";
+import Pagination from "../../Components/Uitily/Pagination";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import ViewSubCategoryAdminHook from "../../hook/admin/view-sub-category-admin-hook";
@@ -33,7 +33,8 @@ const useStyles = makeStyles((theme) => ({
 const AdminEditSubCategory = ({ Subcategories }) => {
   const { id } = useParams();
   const [items, pagination, onPress] = ViewSubCategoryAdminHook(id);
-
+  if (pagination) var pageCount = pagination;
+  else pageCount = 0;
   const [editBrandModal, setEditBrandModal] = useState(false);
   const openEditBrandModal = () => {
     setEditBrandModal(true);
@@ -50,17 +51,20 @@ const AdminEditSubCategory = ({ Subcategories }) => {
         style={{ marginTop: 10, marginBottom: 10 }}
       >
         <Button className="font" variant="dark" onClick={openEditBrandModal}>
-          add category
+          Add Sub-Category
         </Button>
       </div>
       <Row className="justify-content-start">
         {items ? (
           items.map((item, index) => (
-            <AdminItemsCard key={index} item={item} category={true} />
+            <AdminItemsCard key={index} item={item} subCategory={true} />
           ))
         ) : (
           <h4>no categories </h4>
         )}
+        {pageCount > 1 ? (
+          <Pagination pageCount={pageCount} onPress={onPress} />
+        ) : null}
       </Row>
       <ModalMui
         disableAutoFocus={true}
