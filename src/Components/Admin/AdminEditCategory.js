@@ -9,6 +9,7 @@ import Fade from "@material-ui/core/Fade";
 import AdminAddCategory from "./AdminAddCategory";
 import { useState } from "react";
 import noItems from "../../images/noItems.png";
+import { ToastContainer } from "react-toastify";
 const useStyles = makeStyles((theme) => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
@@ -84,6 +85,7 @@ const AdminEditCategory = ({ categories, category }) => {
           </div>
         </Fade>
       </ModalMui>
+      <ToastContainer />
     </div>
   );
 };

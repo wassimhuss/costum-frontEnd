@@ -10,6 +10,7 @@ import AdminAddBrand from "./AdminAddBrand";
 import { useState } from "react";
 import noItems from "../../images/noItems.png";
 import Image from "react-bootstrap/Image";
+import { ToastContainer } from "react-toastify";
 const useStyles = makeStyles((theme) => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
@@ -52,7 +53,7 @@ const AdminAllProducts = ({ brands }) => {
       <Row className="justify-content-start">
         {brands.length >= 1
           ? brands.map((item, index) => (
-              <AdminItemsCard key={index} item={item} />
+              <AdminItemsCard key={index} item={item} brand={true} />
             ))
           : null}
       </Row>
@@ -87,6 +88,7 @@ const AdminAllProducts = ({ brands }) => {
           </div>
         </Fade>
       </ModalMui>
+      <ToastContainer />
     </div>
   );
 };

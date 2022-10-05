@@ -13,6 +13,7 @@ import { useState } from "react";
 import ViewSubCategoryAdminHook from "../../hook/admin/view-sub-category-admin-hook";
 import { SignalCellularNullRounded } from "@material-ui/icons";
 import noItems from "../../images/noItems.png";
+import { ToastContainer } from "react-toastify";
 const useStyles = makeStyles((theme) => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
@@ -96,6 +97,7 @@ const AdminEditSubCategory = ({ Subcategories }) => {
           </div>
         </Fade>
       </ModalMui>
+      <ToastContainer />
     </div>
   );
 };

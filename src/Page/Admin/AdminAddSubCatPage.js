@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import AdminSideBar from "../../Components/Admin/AdminSideBar";
 import AdminEditSubCategory from "../../Components/Admin/AdminEditSubCategory";
+import { ToastContainer } from "react-toastify";
 const AdminAddSubCatPage = () => {
   return (
     <Container fluid>
@@ -14,6 +15,7 @@ const AdminAddSubCatPage = () => {
           <AdminEditSubCategory />
         </Col>
       </Row>
+      <ToastContainer />
     </Container>
   );
 };

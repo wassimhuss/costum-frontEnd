@@ -4,6 +4,7 @@ import AdminSideBar from "../../Components/Admin/AdminSideBar";
 import Pagination from "../../Components/Uitily/Pagination";
 import AdminEditBrand from "../../Components/Admin/AdminEditBrand";
 import ViewBrandAdminHook from "../../hook/admin/view-brand-admin-hook";
+import { ToastContainer } from "react-toastify";
 const AdminAddBrandPage = () => {
   const [items, pagination, onPress] = ViewBrandAdminHook();
   if (pagination) var pageCount = pagination;
@@ -22,6 +23,7 @@ const AdminAddBrandPage = () => {
           ) : null}
         </Col>
       </Row>
+      <ToastContainer />
     </Container>
   );
 };

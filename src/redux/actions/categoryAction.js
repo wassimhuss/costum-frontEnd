@@ -8,6 +8,7 @@ import {
 import { useGetData } from "../../hooks/useGetData";
 import { useInsertDataWithImage } from "../../hooks/useInsertData";
 import useDeleteData from "../../hooks/useDeleteData";
+import { useInUpdateDataWithImage } from "../../hooks/useUpdateData";
 //get all category
 export const getAllCategory = (limit) => async (dispatch) => {
   try {
@@ -106,6 +107,26 @@ export const deleteCategory = (id) => async (dispatch) => {
     dispatch({
       type: DELETE_BRAND,
       payload: response,
+      loading: true,
+    });
+    return response;
+  } catch (e) {
+    dispatch({
+      type: GET_ERROR,
+      payload: "Error " + e,
+    });
+  }
+};
+//edit category with pagination
+export const editCategory = (id, formData) => async (dispatch) => {
+  try {
+    const response = await useInUpdateDataWithImage(
+      `/api/v1/categories/${id}`,
+      formData
+    );
+    dispatch({
+      type: CREATE_CATEGORY,
+      payload: response.data.data,
       loading: true,
     });
     return response;

@@ -14,11 +14,41 @@ import AdminAddBrand from "./AdminAddBrand";
 import { deleteCategory } from "../../redux/actions/categoryAction";
 import { deleteSubCategory } from "../../redux/actions/subcategoryAction";
 import CategoryImg from "../../images/category.png";
-const AdminItemsCard = ({ item, category, subCategory }) => {
+import AdminEditBrandModal from "./AdminEditBrandModal";
+import AdminEditCategoryModal from "./AdminEditCategoryModal";
+import AdminEditSubCategoryModal from "./AdminEditSub/AdminEditSubCategoryModal";
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: "0 20px 60px -2px rgba(27,33,58,.4)",
+    padding: theme.spacing(2, 4, 3),
+    width: "50%",
+    height: "50%",
+    overflow: "hidden",
+    borderRadius: "8px",
+  },
+  modal: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+}));
+const AdminItemsCard = ({ item, category, subCategory, brand }) => {
+  const classes = useStyles();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [editBrandModal, setEditBrandModal] = useState(false);
+  const openEditBrandModal = () => {
+    setEditBrandModal(true);
+  };
 
+  const closeEditBrandModal = () => {
+    setEditBrandModal(false);
+  };
   const dispatch = useDispatch();
 
   const handelDelete = async () => {
@@ -95,17 +125,15 @@ const AdminItemsCard = ({ item, category, subCategory }) => {
             >
               delete
             </div>
-            <Link
-              to={`/admin/category-subs/${item._id}`}
-              style={{ textDecoration: "none" }}
+
+            <div
+              onClick={openEditBrandModal}
+              className="d-inline item-delete-edit"
+              style={{ color: "black" }}
             >
-              <div
-                className="d-inline item-delete-edit"
-                style={{ color: "black" }}
-              >
-                edit
-              </div>
-            </Link>
+              edit
+            </div>
+
             {category ? (
               <Link
                 to={`/admin/category-subs/${item._id}`}
@@ -148,6 +176,30 @@ const AdminItemsCard = ({ item, category, subCategory }) => {
           </Card.Body>
         </div>
       </Card>
+
+      <ModalMui
+        disableAutoFocus={true}
+        className={classes.modal}
+        open={editBrandModal}
+        onClose={closeEditBrandModal}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={editBrandModal}>
+          <div className={classes.paper}>
+            {category ? (
+              <AdminEditCategoryModal item={item} />
+            ) : brand ? (
+              <AdminEditBrandModal item={item} />
+            ) : (
+              <AdminEditSubCategoryModal item={item} />
+            )}
+          </div>
+        </Fade>
+      </ModalMui>
       <ToastContainer />
     </Col>
   );

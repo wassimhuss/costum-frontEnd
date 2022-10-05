@@ -7,6 +7,10 @@ import {
 import { useGetData } from "../../hooks/useGetData";
 import { useInsertData } from "../../hooks/useInsertData";
 import useDeleteData from "../../hooks/useDeleteData";
+import {
+  useInsUpdateData,
+  useInUpdateDataWithImage,
+} from "../../hooks/useUpdateData";
 
 //gcreate sub category with pagination
 export const createSubCategory = (data) => async (dispatch) => {
@@ -72,6 +76,26 @@ export const deleteSubCategory = (id) => async (dispatch) => {
     dispatch({
       type: DELETE_BRAND,
       payload: response,
+      loading: true,
+    });
+    return response;
+  } catch (e) {
+    dispatch({
+      type: GET_ERROR,
+      payload: "Error " + e,
+    });
+  }
+};
+//edit category with pagination
+export const editSubCategory = (id, formData) => async (dispatch) => {
+  try {
+    const response = await useInsUpdateData(
+      `/api/v1/subcategories/${id}`,
+      formData
+    );
+    dispatch({
+      type: CREATE_SUB_CATEGORY,
+      payload: response.data.data,
       loading: true,
     });
     return response;
