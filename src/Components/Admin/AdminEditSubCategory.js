@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Row } from "react-bootstrap";
+import { Button, Image, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import AdminItemsCard from "./AdminItemsCard";
 import { makeStyles } from "@material-ui/core";
@@ -11,6 +11,8 @@ import Pagination from "../../Components/Uitily/Pagination";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import ViewSubCategoryAdminHook from "../../hook/admin/view-sub-category-admin-hook";
+import { SignalCellularNullRounded } from "@material-ui/icons";
+import noItems from "../../images/noItems.png";
 const useStyles = makeStyles((theme) => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
@@ -55,13 +57,24 @@ const AdminEditSubCategory = ({ Subcategories }) => {
         </Button>
       </div>
       <Row className="justify-content-start">
-        {items ? (
-          items.map((item, index) => (
-            <AdminItemsCard key={index} item={item} subCategory={true} />
-          ))
-        ) : (
-          <h4>no categories </h4>
-        )}
+        {items
+          ? items.map((item, index) => (
+              <AdminItemsCard key={index} item={item} subCategory={true} />
+            ))
+          : null}
+        {!items.length >= 1 ? (
+          <div style={{ marginLeft: 250, marginTop: 100 }}>
+            <Image
+              src={noItems}
+              alt="fzx"
+              // Shape={"thumbnail"}
+              fluid
+              height="500px"
+              width="550px"
+              style={{ cursor: "pointer" }}
+            />
+          </div>
+        ) : null}
         {pageCount > 1 ? (
           <Pagination pageCount={pageCount} onPress={onPress} />
         ) : null}

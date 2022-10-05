@@ -18,7 +18,7 @@ const AdminAddCategory = () => {
       <Row className="justify-content-center">
         <div className="admin-content-text-2 pb-4">add new category</div>
         <Col sm="12">
-          <div className="text-form pb-2"> category image</div>
+          <div className="text-form pb-2">category image</div>
           <div>
             <label for="upload-photo">
               <img

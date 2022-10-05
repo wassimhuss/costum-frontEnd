@@ -87,9 +87,10 @@ export const createCategory = (formData) => async (dispatch) => {
     );
     dispatch({
       type: CREATE_CATEGORY,
-      payload: response,
+      payload: response.data.data,
       loading: true,
     });
+    return response;
   } catch (e) {
     dispatch({
       type: GET_ERROR,

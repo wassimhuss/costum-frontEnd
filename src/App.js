@@ -36,6 +36,7 @@ import { useEffect, useState } from "react";
 import ProductsByCategory from "./Page/Products/ProductsByCategory";
 import ProductsByBrand from "./Page/Products/ProductsByBrand";
 import AdminEditSubCategory from "./Components/Admin/AdminEditSubCategory";
+import AdminAddSubCatPage from "./Page/Admin/AdminAddSubCatPage";
 function App() {
   const [isUser, isAdmin, userData] = ProtectedRouteHook();
 
@@ -82,7 +83,7 @@ function App() {
             />
             <Route
               path="/admin/category-subs/:id"
-              element={<AdminEditSubCategory />}
+              element={<AdminAddSubCatPage />}
             />
             <Route
               path="/admin/addsubcategory"

@@ -8,6 +8,8 @@ import ModalMui from "@material-ui/core/Modal";
 import Fade from "@material-ui/core/Fade";
 import AdminAddBrand from "./AdminAddBrand";
 import { useState } from "react";
+import noItems from "../../images/noItems.png";
+import Image from "react-bootstrap/Image";
 const useStyles = makeStyles((theme) => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
@@ -48,14 +50,26 @@ const AdminAllProducts = ({ brands }) => {
         </Button>
       </div>
       <Row className="justify-content-start">
-        {brands ? (
-          brands.map((item, index) => (
-            <AdminItemsCard key={index} item={item} />
-          ))
-        ) : (
-          <h4>no brands </h4>
-        )}
+        {brands.length >= 1
+          ? brands.map((item, index) => (
+              <AdminItemsCard key={index} item={item} />
+            ))
+          : null}
       </Row>
+      {!brands.length >= 1 ? (
+        <div style={{ marginLeft: 250, marginTop: 100 }}>
+          <Image
+            src={noItems}
+            alt="fzx"
+            // Shape={"thumbnail"}
+            fluid
+            height="500px"
+            width="550px"
+            style={{ cursor: "pointer" }}
+          />
+        </div>
+      ) : null}
+
       <ModalMui
         disableAutoFocus={true}
         className={classes.modal}

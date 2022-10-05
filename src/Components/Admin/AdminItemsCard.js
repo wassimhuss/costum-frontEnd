@@ -13,7 +13,7 @@ import Fade from "@material-ui/core/Fade";
 import AdminAddBrand from "./AdminAddBrand";
 import { deleteCategory } from "../../redux/actions/categoryAction";
 import { deleteSubCategory } from "../../redux/actions/subcategoryAction";
-
+import CategoryImg from "../../images/category.png";
 const AdminItemsCard = ({ item, category, subCategory }) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -25,20 +25,20 @@ const AdminItemsCard = ({ item, category, subCategory }) => {
     if (category) {
       await dispatch(deleteCategory(item._id)).then((res) =>
         res
-          ? notify("brand deleted successfuly", "success") +
+          ? notify("category deleted successfuly", "success") +
             setTimeout(() => {
               window.location.reload();
             }, 1250)
-          : notify("oh no ! there is a problem ", "error")
+          : notify("please try again later ", "error")
       );
     } else if (subCategory) {
       await dispatch(deleteSubCategory(item._id)).then((res) =>
         res
-          ? notify("brand deleted successfuly", "success") +
+          ? notify("sub-category deleted successfuly", "success") +
             setTimeout(() => {
               window.location.reload();
             }, 1250)
-          : notify("oh no ! there is a problem ", "error")
+          : notify("please try again later ", "error")
       );
       setShow(false);
     } else {
@@ -48,7 +48,7 @@ const AdminItemsCard = ({ item, category, subCategory }) => {
             setTimeout(() => {
               window.location.reload();
             }, 1250)
-          : notify("oh no ! there is a problem ", "error")
+          : notify("please try again later ", "error")
       );
       setShow(false);
     }
@@ -124,7 +124,7 @@ const AdminItemsCard = ({ item, category, subCategory }) => {
         <div style={{ textDecoration: "none" }}>
           <Card.Img
             style={{ height: "150px", width: "100%" }}
-            src={item.image}
+            src={item.image ? item.image : CategoryImg}
           />
           <Card.Body>
             <Card.Title>

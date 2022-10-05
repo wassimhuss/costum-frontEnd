@@ -14,9 +14,10 @@ export const createSubCategory = (data) => async (dispatch) => {
     const response = await useInsertData("/api/v1/subcategories", data);
     dispatch({
       type: CREATE_SUB_CATEGORY,
-      payload: response,
+      payload: response.data.data,
       loading: true,
     });
+    return response;
   } catch (e) {
     dispatch({
       type: GET_ERROR,

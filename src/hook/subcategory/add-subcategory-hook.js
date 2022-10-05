@@ -41,11 +41,11 @@ const AddSubcategoryhook = () => {
       return;
     }
     if (id === "0") {
-      notify("من فضلك اختر تصنيف رئيسي", "warn");
+      notify("please select category", "warn");
       return;
     }
     if (name === "") {
-      notify("من فضلك ادخل اسم التصنيف", "warn");
+      notify("please enter subcategory name", "warn");
       return;
     }
 
@@ -55,27 +55,34 @@ const AddSubcategoryhook = () => {
         name,
         category: id,
       })
+    ).then((res) =>
+      res
+        ? notify("category added successfully", "success") +
+          setTimeout(() => {
+            window.location.reload();
+          }, 1250)
+        : notify("please try again later ", "error")
     );
     setLoading(false);
   };
-  useEffect(() => {
-    if (loading === false) {
-      setName("");
-      setID("0");
-      if (subcategory) console.log(subcategory);
-      if (subcategory.status === 201) {
-        notify("تمت الاضافة بنجاح", "success");
-      } else if (
-        subcategory === "Error Error: Request failed with status code 400"
-      ) {
-        notify("هذا الاسم مكرر من فضلك اختر اسم اخر", "warn");
-      } else {
-        notify("هناك مشكله فى عملية الاضافة", "warn");
-      }
+  // useEffect(() => {
+  //   if (loading === false) {
+  //     setName("");
+  //     setID("0");
+  //     if (subcategory) console.log(subcategory);
+  //     if (subcategory.status === 201) {
+  //       notify("subcategory added successfully", "success");
+  //     } else if (
+  //       subcategory === "Error Error: Request failed with status code 400"
+  //     ) {
+  //       notify("this name already exist ", "warn");
+  //     } else {
+  //       notify("please try again later", "warn");
+  //     }
 
-      setLoading(true);
-    }
-  }, [loading]);
+  //     setLoading(true);
+  //   }
+  // }, [loading]);
 
   return [
     id,

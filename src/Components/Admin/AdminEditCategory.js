@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Row } from "react-bootstrap";
+import { Button, Image, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import AdminItemsCard from "./AdminItemsCard";
 import { makeStyles } from "@material-ui/core";
@@ -8,6 +8,7 @@ import ModalMui from "@material-ui/core/Modal";
 import Fade from "@material-ui/core/Fade";
 import AdminAddCategory from "./AdminAddCategory";
 import { useState } from "react";
+import noItems from "../../images/noItems.png";
 const useStyles = makeStyles((theme) => ({
   paper: {
     backgroundColor: theme.palette.background.paper,
@@ -48,14 +49,24 @@ const AdminEditCategory = ({ categories, category }) => {
         </Button>
       </div>
       <Row className="justify-content-start">
-        {categories ? (
-          categories.map((item, index) => (
-            <AdminItemsCard key={index} item={item} category={true} />
-          ))
-        ) : (
-          <h4>no categories </h4>
-        )}
+        {categories
+          ? categories.map((item, index) => (
+              <AdminItemsCard key={index} item={item} category={true} />
+            ))
+          : null}
       </Row>
+      {!categories.length >= 1 ? (
+        <div style={{ marginLeft: 250, marginTop: 100 }}>
+          <Image
+            src={noItems}
+            alt="fzx"
+            fluid
+            height="500px"
+            width="550px"
+            style={{ cursor: "pointer" }}
+          />
+        </div>
+      ) : null}
       <ModalMui
         disableAutoFocus={true}
         className={classes.modal}
