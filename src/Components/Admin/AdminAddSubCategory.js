@@ -18,9 +18,9 @@ const AdminAddSubCategory = () => {
 
   return (
     <div>
-      <Row className="justify-content-start ">
-        <div className="admin-content-text pb-4">add new subcategory</div>
-        <Col sm="6">
+      <Row className="justify-content-center">
+        <div className="admin-content-text-2 pb-4">add new subcategory</div>
+        <Col sm="12">
           <input
             value={name}
             onChange={onChangeName}
@@ -48,7 +48,11 @@ const AdminAddSubCategory = () => {
         </Col>
       </Row>
       <Row>
-        <Col sm="6" className="d-flex justify-content-end ">
+        <Col
+          sm="12"
+          className="d-flex justify-content-end "
+          style={{ marginTop: "5%" }}
+        >
           <button onClick={handelSubmit} className="btn-save d-inline mt-2 ">
             create
           </button>
