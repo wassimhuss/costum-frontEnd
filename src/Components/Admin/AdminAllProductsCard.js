@@ -55,10 +55,6 @@ const AdminAllProductsCard = ({ item }) => {
             <div onClick={handleShow} className="d-inline item-delete-edit">
               delete
             </div>
-            {/* <Link
-              to={{ pathname: `/admin/editproduct/${item._id}`, state: item }}
-              style={{ textDecoration: "none" }}
-            > */}
             <div
               onClick={() =>
                 navigate(`/admin/editproduct/${item._id}`, { state: item })
@@ -67,7 +63,6 @@ const AdminAllProductsCard = ({ item }) => {
             >
               edit
             </div>
-            {/* </Link> */}
           </Col>
         </Row>
         <Link to={`/products/${item._id}`} style={{ textDecoration: "none" }}>
@@ -88,7 +83,7 @@ const AdminAllProductsCard = ({ item }) => {
                       <div>
                         <span style={{ textDecorationLine: "line-through" }}>
                           {item.price}
-                        </span>{" "}
+                        </span>
                         {item.priceAfterDiscount}
                       </div>
                     ) : (

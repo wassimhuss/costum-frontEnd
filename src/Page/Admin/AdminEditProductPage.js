@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import AdminEditProductsHook from "../../hook/products/add-products-hook";
+import AdminEditProductsHook from "../../hook/products/edit-products-hook2";
 import Multiselect from "multiselect-react-dropdown";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
@@ -184,8 +184,8 @@ const AdminEditProductPage = (props) => {
   );
   console.log(productVariant);
   useEffect(() => {
-    if (productVariant.combos) {
-      let newarr = productVariant.combos.map((str, index) => ({
+    if (productVariant?.combos) {
+      let newarr = productVariant?.combos.map((str, index) => ({
         combinationName: str,
         quantity: "",
         price: product.data.data.price,
@@ -494,7 +494,7 @@ const AdminEditProductPage = (props) => {
             </AccordionSummary>
             <AccordionDetails>
               <Container fluid>
-                {productVariant.combos ? (
+                {productVariant?.combos ? (
                   <Row
                     className="justify-content-center"
                     style={{ width: "100%", marginBottom: 20 }}
