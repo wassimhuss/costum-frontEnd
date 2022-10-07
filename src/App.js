@@ -37,6 +37,7 @@ import ProductsByCategory from "./Page/Products/ProductsByCategory";
 import ProductsByBrand from "./Page/Products/ProductsByBrand";
 import AdminEditSubCategory from "./Components/Admin/AdminEditSubCategory";
 import AdminAddSubCatPage from "./Page/Admin/AdminAddSubCatPage";
+import AdminEditProductPage from "./Page/Admin/AdminEditProductPage";
 function App() {
   const [isUser, isAdmin, userData] = ProtectedRouteHook();
 
@@ -100,7 +101,7 @@ function App() {
             />
             <Route
               path="/admin/editproduct/:id"
-              element={<AdminEditProductsPage />}
+              element={<AdminEditProductPage />}
             />
           </Route>
 
