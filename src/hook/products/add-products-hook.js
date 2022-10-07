@@ -231,6 +231,7 @@ const AdminAddProductsHook = () => {
   };
   //to save data
   const handelSubmit = async (e) => {
+    console.log("seletedSubID " + JSON.stringify(seletedSubID));
     setProductLoading(true);
     setLoading(true);
     e.preventDefault();
@@ -261,9 +262,7 @@ const AdminAddProductsHook = () => {
 
     formData.append("imageCover", imgCover);
     itemImages.map((item) => formData.append("images", item));
-
-    colors.map((color) => formData.append("availableColors", color));
-    seletedSubID.map((item) => formData.append("subcategory", item._id));
+    seletedSubID.map((item) => formData.append("subcategories", item._id));
     await dispatch(createProduct(formData)).then((response) =>
       response
         ? setIsDisabledAccordion(false) +
@@ -287,32 +286,8 @@ const AdminAddProductsHook = () => {
       SetBrandID(0);
       setSeletedSubID([]);
       setTimeout(() => setLoading(true), 1500);
-
-      // if (product) {
-      //   if (product.status === 201) {
-      //     setIsDisabledAccordion(false);
-      //     notify("product added succefully", "success");
-      //   } else {
-      //     notify("oh no ! there is a problem ", "error");
-      //   }
-      // }
     }
   }, [loading]);
-  // useEffect(() => {
-  //   if (VariantLoading === false) {
-  //     setVariantLoading(true);
-  //     // setTimeout(() => , 1500);
-
-  //     if (productVariant) {
-  //       //  console.log("products variants : " + JSON.stringify(productVariant));
-  //       if (productVariant.combos?.length > 0) {
-  //         notify("generated", "success");
-  //       } else {
-  //         notify("oh no ! there is a problem ", "error");
-  //       }
-  //     }
-  //   }
-  // }, [VariantLoading]);
   return [
     onChangeDesName,
     onChangeQty,

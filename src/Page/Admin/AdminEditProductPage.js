@@ -127,6 +127,7 @@ const AdminEditProductPage = (props) => {
     // await new Promise((resolve) => setTimeout(resolve, 1000));
     // actions.resetForm();
   };
+  const [subCatToSend, setsubCatToSend] = useState([]);
   const dispatch = useDispatch();
   const product = useSelector((state) => state.allproducts.products);
   const {
@@ -144,19 +145,19 @@ const AdminEditProductPage = (props) => {
       price: location.state.price,
       discountPrice: location.state.priceAfterDiscount,
       quantity: "",
-      category: "",
-      subCategory: "",
-      brand: "",
+      category: location.state.category._id,
+      subCategory: subCatToSend,
+      brand: location.state.brand._id,
     },
     validationSchema: schema,
     onSubmit,
   });
   console.log(product);
   useEffect(() => {
-    if (values.category.length > 0) {
-      dispatch(getOneCategory(values.category));
+    if (location.state.category._id) {
+      dispatch(getOneCategory(location.state.category._id));
     }
-  }, [values.category]);
+  }, [location.state.category]);
   //get last sub cat state from redux
   const subCat = useSelector((state) => state.subCategory.subcategory);
   useEffect(() => {
@@ -169,6 +170,15 @@ const AdminEditProductPage = (props) => {
       handleNextAccordion("panel3");
     }
   }, [setIsDisabledAccordion]);
+
+  useEffect(() => {
+    if (location.state.subcategories.length > 0) {
+      location.state.subcategories.map((item) => {
+        subCatToSend.push(item._id);
+      });
+    }
+  }, [location.state.subcategories]);
+  console.log("subCatToSend : " + JSON.stringify(subCatToSend));
   const [expanded, setExpanded] = React.useState("panel1");
   const [isDisabledAccordion1, setIsDisabledAccordion1] = React.useState(true);
   // const [isDisabledAccordion, setIsDisabledAccordion] = React.useState(true);
@@ -431,6 +441,7 @@ const AdminEditProductPage = (props) => {
                       <Multiselect
                         id="subCategory"
                         className="mt-2"
+                        selectedValues={location.state.subcategories}
                         placeholder="select subcategory"
                         options={options}
                         onSelect={onSelect}
