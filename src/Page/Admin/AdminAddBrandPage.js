@@ -1,13 +1,10 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import AdminSideBar from "../../Components/Admin/AdminSideBar";
-import AdminAllProducts from "../../Components/Admin/AdminAllProducts";
 import Pagination from "../../Components/Uitily/Pagination";
-import AdminOrderDetalis from "../../Components/Admin/AdminOrderDetalis";
-import AdminAddBrand from "../../Components/Admin/AdminAddBrand";
 import AdminEditBrand from "../../Components/Admin/AdminEditBrand";
-import ViewProductAdminHook from "../../hook/admin/view-product-admin-hook";
 import ViewBrandAdminHook from "../../hook/admin/view-brand-admin-hook";
+import { ToastContainer } from "react-toastify";
 const AdminAddBrandPage = () => {
   const [items, pagination, onPress] = ViewBrandAdminHook();
   if (pagination) var pageCount = pagination;
@@ -26,6 +23,7 @@ const AdminAddBrandPage = () => {
           ) : null}
         </Col>
       </Row>
+      <ToastContainer />
     </Container>
   );
 };

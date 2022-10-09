@@ -5,19 +5,31 @@ import {
   createProductCombos,
   createProductVariant,
   deleteProductVariant,
+  getOneProduct,
 } from "../../redux/actions/productsAction";
-import notify from "./../../hook/useNotifaction";
+import notify from "../useNotifaction";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllCategory } from "../../redux/actions/categoryAction";
-import { getAllBrand } from "./../../redux/actions/brandAction";
+import { getAllBrand } from "../../redux/actions/brandAction";
 import * as yup from "yup";
 import { useFormik, Form } from "formik";
-const AdminAddProductsHook = () => {
+const AdminAddProductsHook = (id) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAllCategory());
-    dispatch(getAllBrand());
+    const run = async () => {
+      await dispatch(getOneProduct(id));
+      await dispatch(getAllCategory());
+      await dispatch(getAllBrand());
+    };
+    run();
   }, []);
+  //get one product details
+  const item = useSelector((state) => state.allproducts.oneProduct);
+  useEffect(() => {
+    if (item.data) {
+      setImages(item.data.images);
+    }
+  }, [item]);
   const schema = yup.object().shape({
     productName: yup.string().min(3).required(),
     description: yup.string().min(20).required(),
@@ -229,9 +241,17 @@ const AdminAddProductsHook = () => {
     setProductVariantLoading(false);
     setVariantLoading(false);
   };
+  //convert url to file
+  const convertURLtoFile = async (url) => {
+    const response = await fetch(url, { mode: "cors" });
+    const data = await response.blob();
+    const ext = url.split(".").pop();
+    const filename = url.split("/").pop();
+    const metadata = { type: `image/${ext}` };
+    return new File([data], Math.random(), metadata);
+  };
   //to save data
   const handelSubmit = async (e) => {
-    console.log("seletedSubID " + JSON.stringify(seletedSubID));
     setProductLoading(true);
     setLoading(true);
     e.preventDefault();
@@ -240,14 +260,22 @@ const AdminAddProductsHook = () => {
       return;
     }
 
-    //convert base 64 image to file
-    const imgCover = dataURLtoFile(images[0], Math.random() + ".png");
+    let imgCover;
+    if (images[0].length <= 1000) {
+      convertURLtoFile(images[0]).then((val) => (imgCover = val));
+    } else {
+      imgCover = dataURLtoFile(images[0], Math.random() + ".png");
+    }
+
+    let itemImages = [];
     //convert array of base 64 image to file
-    const itemImages = Array.from(Array(Object.keys(images).length).keys()).map(
-      (item, index) => {
-        return dataURLtoFile(images[index], Math.random() + ".png");
+    Array.from(Array(Object.keys(images).length).keys()).map((item, index) => {
+      if (images[index].length <= 1000) {
+        convertURLtoFile(images[index]).then((val) => itemImages.push(val));
+      } else {
+        itemImages.push(dataURLtoFile(images[index], Math.random() + ".png"));
       }
-    );
+    });
 
     const formData = new FormData();
     formData.append("title", data.productName);
@@ -262,7 +290,9 @@ const AdminAddProductsHook = () => {
 
     formData.append("imageCover", imgCover);
     itemImages.map((item) => formData.append("images", item));
-    seletedSubID.map((item) => formData.append("subcategories", item._id));
+
+    colors.map((color) => formData.append("availableColors", color));
+    seletedSubID.map((item) => formData.append("subcategory", item._id));
     await dispatch(createProduct(formData)).then((response) =>
       response
         ? setIsDisabledAccordion(false) +
@@ -286,8 +316,32 @@ const AdminAddProductsHook = () => {
       SetBrandID(0);
       setSeletedSubID([]);
       setTimeout(() => setLoading(true), 1500);
+
+      // if (product) {
+      //   if (product.status === 201) {
+      //     setIsDisabledAccordion(false);
+      //     notify("product added succefully", "success");
+      //   } else {
+      //     notify("oh no ! there is a problem ", "error");
+      //   }
+      // }
     }
   }, [loading]);
+  // useEffect(() => {
+  //   if (VariantLoading === false) {
+  //     setVariantLoading(true);
+  //     // setTimeout(() => , 1500);
+
+  //     if (productVariant) {
+  //       //  console.log("products variants : " + JSON.stringify(productVariant));
+  //       if (productVariant.combos?.length > 0) {
+  //         notify("generated", "success");
+  //       } else {
+  //         notify("oh no ! there is a problem ", "error");
+  //       }
+  //     }
+  //   }
+  // }, [VariantLoading]);
   return [
     onChangeDesName,
     onChangeQty,

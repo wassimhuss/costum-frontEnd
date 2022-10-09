@@ -15,10 +15,10 @@ const AdminAddCategory = () => {
 
   return (
     <div>
-      <Row className="justify-content-start ">
-        <div className="admin-content-text pb-4">add new category</div>
-        <Col sm="6">
-          <div className="text-form pb-2"> category image</div>
+      <Row className="justify-content-center">
+        <div className="admin-content-text-2 pb-4">add new category</div>
+        <Col sm="12">
+          <div className="text-form pb-2">category image</div>
           <div>
             <label for="upload-photo">
               <img
@@ -47,7 +47,7 @@ const AdminAddCategory = () => {
         </Col>
       </Row>
       <Row>
-        <Col sm="6" className="d-flex justify-content-end ">
+        <Col sm="12" className="d-flex justify-content-end ">
           <button onClick={handelSubmit} className="btn-save d-inline mt-2 ">
             create
           </button>

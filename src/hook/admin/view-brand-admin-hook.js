@@ -5,11 +5,11 @@ import { getAllBrandsPage, getAllBrand } from "../../redux/actions/brandAction";
 const Viewbrandadminhook = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAllBrand(8));
+    dispatch(getAllBrand(12));
   }, []);
 
   const onPress = async (page) => {
-    await dispatch(getAllBrandsPage(page, 8));
+    await dispatch(getAllBrandsPage(page, 12));
   };
   let items = [];
   let pagination = [];
